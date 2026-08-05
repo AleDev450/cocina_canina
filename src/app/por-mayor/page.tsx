@@ -8,6 +8,8 @@ import { FormularioCotizacion } from "@/components/mayoreo/FormularioCotizacion"
 import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { CabeceraSeccion, Pastilla } from "@/components/ui/Elementos";
 import { precio } from "@/lib/formato";
+import { hayConexion } from "@/lib/supabase/entorno";
+import { SinConexion } from "@/components/layout/SinConexion";
 
 export const metadata: Metadata = {
   title: "Compra por mayor",
@@ -18,6 +20,8 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function PaginaPorMayor() {
+  if (!hayConexion) return <SinConexion />;
+
   const [lotesMayor, config] = await Promise.all([
     obtenerLotesMayor(),
     obtenerConfiguracion(),

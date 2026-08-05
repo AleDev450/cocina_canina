@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { Database } from "lucide-react";
 import { Hero } from "@/components/inicio/Hero";
 import { QuienesSomos } from "@/components/inicio/QuienesSomos";
 import { Categorias } from "@/components/inicio/Categorias";
@@ -23,37 +21,9 @@ import {
 import { obtenerRecompensas, obtenerRegla } from "@/server/recompensas";
 import { perfilActual } from "@/server/sesion";
 import { hayConexion } from "@/lib/supabase/entorno";
+import { SinConexion } from "@/components/layout/SinConexion";
 
 export const dynamic = "force-dynamic";
-
-/** Aviso que se ve mientras el `.env.local` no esté configurado. */
-function SinConexion() {
-  return (
-    <div className="contenedor flex min-h-[70vh] items-center justify-center py-20">
-      <div className="max-w-lg rounded-blob border border-petroleo-700/10 bg-white p-10 text-center">
-        <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-naranja-50 text-naranja-600">
-          <Database className="h-6 w-6" />
-        </span>
-        <h1 className="mt-6 font-display text-2xl font-semibold text-petroleo-900">
-          Falta conectar Supabase
-        </h1>
-        <p className="mt-3 text-sm leading-relaxed text-grafito">
-          Copia <code className="rounded bg-crema-100 px-1.5 py-0.5">.env.example</code>{" "}
-          como <code className="rounded bg-crema-100 px-1.5 py-0.5">.env.local</code>,
-          completa las claves del proyecto y ejecuta los archivos de{" "}
-          <code className="rounded bg-crema-100 px-1.5 py-0.5">supabase/</code> en el SQL
-          Editor. Los pasos completos están en el README.
-        </p>
-        <Link
-          href="/admin/ingresar"
-          className="mt-6 inline-flex text-sm font-semibold text-naranja-600 hover:underline"
-        >
-          Ir al panel de administración
-        </Link>
-      </div>
-    </div>
-  );
-}
 
 export default async function Inicio() {
   if (!hayConexion) return <SinConexion />;

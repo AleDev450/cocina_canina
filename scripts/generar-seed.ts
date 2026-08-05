@@ -1,5 +1,5 @@
 /**
- * Genera `supabase/04_seed.sql` a partir de los archivos de `src/data`.
+ * Genera `supabase/seed.sql` a partir de los archivos de `src/data`.
  *
  * Así el catálogo tiene una sola fuente de verdad: se edita el TypeScript y se
  * regenera el seed con `npm run seed`.
@@ -43,7 +43,7 @@ const w = (s = "") => lineas.push(s);
 /* --------------------------------- Cabecera ------------------------------- */
 
 w("-- =============================================================================");
-w("-- La Cocina Canina — 04. Datos iniciales");
+w("-- La Cocina Canina — datos iniciales");
 w("--");
 w("-- ARCHIVO GENERADO por scripts/generar-seed.ts — no editar a mano.");
 w("-- Para regenerarlo: npm run seed");
@@ -338,9 +338,9 @@ w("--    where email = 'tucorreo@ejemplo.pe'");
 w("--   on conflict (id) do update set rol = 'administrador', activo = true;");
 w("-- =============================================================================");
 
-writeFileSync("supabase/04_seed.sql", lineas.join("\n") + "\n", "utf8");
+writeFileSync("supabase/seed.sql", lineas.join("\n") + "\n", "utf8");
 console.log(
-  `04_seed.sql generado · ${productos.length} productos, ${categorias.length} categorías, ` +
+  `seed.sql generado · ${productos.length} productos, ${categorias.length} categorías, ` +
     `${productosBarf.length} recetas BARF, ${lotesMayor.length} lotes por mayor, ` +
     `${preguntas.length} preguntas, ${testimonios.length} testimonios.`,
 );

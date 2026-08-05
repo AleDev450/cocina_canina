@@ -9,6 +9,8 @@ import { CalculadorBarf } from "@/components/barf/CalculadorBarf";
 import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { CabeceraSeccion } from "@/components/ui/Elementos";
 import { Acordeon } from "@/components/ui/Acordeon";
+import { hayConexion } from "@/lib/supabase/entorno";
+import { SinConexion } from "@/components/layout/SinConexion";
 
 export const metadata: Metadata = {
   title: "Alimentación BARF",
@@ -46,6 +48,8 @@ const BENEFICIOS = [
 export const dynamic = "force-dynamic";
 
 export default async function PaginaBarf() {
+  if (!hayConexion) return <SinConexion />;
+
   const [productosBarf, preguntas, regla] = await Promise.all([
     obtenerBarf(),
     obtenerPreguntas(),

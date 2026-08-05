@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Catalogo } from "@/components/producto/Catalogo";
 import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { obtenerCategorias, obtenerProductos } from "@/server/catalogo";
+import { hayConexion } from "@/lib/supabase/entorno";
+import { SinConexion } from "@/components/layout/SinConexion";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +18,8 @@ export default async function PaginaProductos({
 }: {
   searchParams: Promise<{ categoria?: string }>;
 }) {
+  if (!hayConexion) return <SinConexion />;
+
   const { categoria } = await searchParams;
 
   const [productos, categorias] = await Promise.all([

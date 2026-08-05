@@ -5,6 +5,8 @@ import { ListaFaq } from "@/components/faq/ListaFaq";
 import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { Boton } from "@/components/ui/Boton";
 import { obtenerConfiguracion, obtenerPreguntas } from "@/server/contenido";
+import { hayConexion } from "@/lib/supabase/entorno";
+import { SinConexion } from "@/components/layout/SinConexion";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +17,8 @@ export const metadata: Metadata = {
 };
 
 export default async function PaginaFaq() {
+  if (!hayConexion) return <SinConexion />;
+
   const [preguntas, config] = await Promise.all([
     obtenerPreguntas(),
     obtenerConfiguracion(),

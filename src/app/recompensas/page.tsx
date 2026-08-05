@@ -15,6 +15,8 @@ import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { Boton } from "@/components/ui/Boton";
 import { CabeceraSeccion, Pastilla } from "@/components/ui/Elementos";
 import { fechaCorta, precio } from "@/lib/formato";
+import { hayConexion } from "@/lib/supabase/entorno";
+import { SinConexion } from "@/components/layout/SinConexion";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +27,8 @@ export const metadata: Metadata = {
 };
 
 export default async function PaginaRecompensas() {
+  if (!hayConexion) return <SinConexion />;
+
   const [regla, recompensas, perfil] = await Promise.all([
     obtenerRegla(),
     obtenerRecompensas(),

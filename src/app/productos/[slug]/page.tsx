@@ -9,6 +9,8 @@ import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { CabeceraSeccion } from "@/components/ui/Elementos";
 import { precioDesde } from "@/lib/precio";
 import { precio } from "@/lib/formato";
+import { hayConexion } from "@/lib/supabase/entorno";
+import { SinConexion } from "@/components/layout/SinConexion";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +44,8 @@ export default async function PaginaProducto({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  if (!hayConexion) return <SinConexion />;
+
   const { slug } = await params;
 
   const producto = await obtenerProducto(slug);

@@ -7,6 +7,8 @@ import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { Boton } from "@/components/ui/Boton";
 import { CabeceraSeccion } from "@/components/ui/Elementos";
 import { iconosPorNombre, type NombreIcono } from "@/components/ui/Iconos";
+import { hayConexion } from "@/lib/supabase/entorno";
+import { SinConexion } from "@/components/layout/SinConexion";
 
 export const metadata: Metadata = {
   title: "Quiénes somos",
@@ -51,6 +53,8 @@ const CIFRAS = [
 export const dynamic = "force-dynamic";
 
 export default async function PaginaNosotros() {
+  if (!hayConexion) return <SinConexion />;
+
   const [quienesSomos, config] = await Promise.all([
     obtenerNosotros(),
     obtenerConfiguracion(),

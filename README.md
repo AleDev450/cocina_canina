@@ -9,41 +9,62 @@ guarda en PostgreSQL. La tienda pública lee de esa misma base.
 
 ## Puesta en marcha
 
-### 1. Instalar
+Hay dos caminos. El **local** no necesita cuenta ni internet una vez descargadas
+las imágenes; el **de nube** sirve para publicar. El código es idéntico: lo único
+que cambia son las tres variables de `.env.local`.
+
+### Opción A · Todo en tu máquina (recomendado para desarrollar)
+
+Requiere **Docker Desktop corriendo**. La primera vez descarga ~3 GB de imágenes.
 
 ```bash
 npm install
+npm run db:start      # levanta Postgres + Auth + Storage + Studio
 ```
 
-### 2. Crear el proyecto en Supabase
+Al terminar imprime las claves. Cópialas a `.env.local`:
 
-En [supabase.com](https://supabase.com) crea un proyecto y, en el **SQL Editor**,
-ejecuta los archivos de `supabase/` **en este orden**:
+```
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<el "anon key" que imprimió>
+SUPABASE_SERVICE_ROLE_KEY=<el "service_role key" que imprimió>
+```
 
-| Archivo | Qué hace |
+```bash
+npm run dev           # http://localhost:3000
+```
+
+Las migraciones de `supabase/migrations/` y el `supabase/seed.sql` se aplican
+solos al arrancar, así que el catálogo ya viene cargado.
+
+| Comando | Qué hace |
 | --- | --- |
-| `01_schema.sql` | Tablas, tipos, funciones y triggers |
-| `02_rls.sql` | Políticas de Row Level Security por rol |
-| `03_storage.sql` | Buckets `catalogo` y `mascotas` |
-| `04_seed.sql` | Catálogo completo, contenido y configuración inicial |
+| `npm run db:start` | Levanta la pila local |
+| `npm run db:stop` | La apaga (los datos se conservan) |
+| `npm run db:reset` | Borra y recrea la base desde migraciones + seed |
+| `npm run db:studio` | Muestra las URLs y claves otra vez |
 
-### 3. Configurar las claves
+**Studio** (el panel de la base) queda en <http://127.0.0.1:54323> y los correos
+que envía la app —confirmaciones, recuperación de contraseña— se quedan
+atrapados en **Mailpit**, <http://127.0.0.1:54324>. No sale nada a internet.
 
-Copia `.env.example` como `.env.local` y completa con los valores de
-**Project Settings → API**:
+### Opción B · Supabase en la nube
 
-```
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
-```
+1. Crea un proyecto en [supabase.com](https://supabase.com) (región South
+   America / São Paulo).
+2. En el **SQL Editor**, ejecuta en orden el contenido de
+   `supabase/migrations/` (por nombre de archivo) y después `supabase/seed.sql`.
+   Alternativa con el CLI: `npx supabase link --project-ref <ref>` y
+   `npx supabase db push`.
+3. Copia a `.env.local` la **Project URL** y las claves **anon** y
+   **service_role** de Project Settings → API.
+4. En Authentication → Providers → Email, desactiva *Confirm email* mientras
+   desarrollas.
 
-La clave de servicio solo se usa en el servidor (pedidos de invitados y alta de
-personal). **No la subas al repositorio.**
+### Crear el primer administrador
 
-### 4. Crear el primer administrador
-
-Regístrate en `/registro` con tu correo y luego, en el SQL Editor:
+Regístrate en `/registro` y luego, en el SQL Editor (o en Studio si trabajas en
+local):
 
 ```sql
 insert into staff (id, nombre, correo, rol)
@@ -52,20 +73,13 @@ select id, 'Tu nombre', email, 'administrador' from auth.users
 on conflict (id) do update set rol = 'administrador', activo = true;
 ```
 
-Desde ahí ya puedes crear al resto del equipo desde `/admin/usuarios`, sin volver
-a tocar SQL.
+Desde ahí ya puedes dar de alta al resto del equipo en `/admin/usuarios`, sin
+volver a tocar SQL.
 
-> **Durante el desarrollo**, en Supabase → Authentication → Providers → Email,
-> desactiva *Confirm email* para poder entrar sin pasar por el correo.
+### Comandos del proyecto
 
-### 5. Levantar
-
-```bash
-npm run dev          # http://localhost:3000
-```
-
-Otros comandos: `npm run build`, `npm start`, `npm run typecheck`,
-`npm run seed` (regenera `04_seed.sql` desde `src/data`).
+`npm run dev` · `npm run build` · `npm start` · `npm run typecheck` ·
+`npm run seed` (regenera `supabase/seed.sql` desde `src/data`).
 
 ## Autenticación
 
@@ -123,8 +137,7 @@ orden de secciones), Banners, Preguntas frecuentes, Testimonios.
 - Al pasar un pedido a **Confirmado** se descuenta el stock de cada presentación.
 - Al pasar a **Entregado** se acreditan los puntos; al **Cancelar**, se anulan.
 - El saldo de puntos del perfil se recalcula solo con cada movimiento.
-- `vencer_puntos()` caduca los puntos vencidos (conéctala a un cron diario de
-  Supabase).
+- `vencer_puntos()` caduca los puntos vencidos (conéctala a un cron diario).
 
 ## Cómo está organizado
 
@@ -136,7 +149,9 @@ src/
     acciones/       Server Actions con validación Zod
   lib/supabase/     clientes de navegador, servidor y servicio
   data/             constantes de marca y semilla del catálogo
-supabase/           SQL en orden de ejecución
+supabase/
+  migrations/       esquema, RLS y storage
+  seed.sql          catálogo y contenido inicial (generado)
 scripts/            generador del seed
 ```
 
@@ -172,9 +187,6 @@ Las fotografías de producto son las del catálogo oficial, recortadas sin fondo
 
 ## Detalles de implementación que conviene conocer
 
-- **El SQL no se ha ejecutado todavía contra un servidor.** Está escrito y
-  revisado, pero no hubo un Postgres disponible para probarlo; conviene correrlo
-  primero en un proyecto de Supabase de prueba.
 - **Favoritos** viven en `localStorage`, no en la base: funcionan también sin
   cuenta. La tabla `favoritos` existe en el esquema para cuando se quieran
   sincronizar entre dispositivos.
@@ -184,5 +196,7 @@ Las fotografías de producto son las del catálogo oficial, recortadas sin fondo
 - **Pedidos sin registro**: se insertan con la clave de servicio, porque no hay
   un `auth.uid()` al que asociarlos. No generan puntos.
 - **Roles nuevos**: `rol_staff` es un enum de PostgreSQL. Para añadir un rol hay
-  que ampliar el tipo en Supabase; los permisos de los cinco existentes sí se
-  editan desde el CMS.
+  que ampliar el tipo; los permisos de los cinco existentes sí se editan desde
+  el CMS.
+- **Sin `.env.local` configurado** la web arranca igual y muestra un aviso de
+  "Falta conectar Supabase" en lugar de reventar.

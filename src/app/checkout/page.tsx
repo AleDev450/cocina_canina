@@ -5,6 +5,8 @@ import { obtenerConfiguracion } from "@/server/contenido";
 import { obtenerRegla } from "@/server/recompensas";
 import { misDirecciones } from "@/server/clientes";
 import { perfilActual } from "@/server/sesion";
+import { hayConexion } from "@/lib/supabase/entorno";
+import { SinConexion } from "@/components/layout/SinConexion";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +16,8 @@ export const metadata: Metadata = {
 };
 
 export default async function PaginaCheckout() {
+  if (!hayConexion) return <SinConexion />;
+
   const [config, regla, perfil] = await Promise.all([
     obtenerConfiguracion(),
     obtenerRegla(),
