@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { MessageCircle } from "lucide-react";
-import { pedidoWhatsapp, sitio } from "@/data/sitio";
+import { pedidoWhatsapp as porDefecto, sitio as sitioPorDefecto } from "@/data/sitio";
 import { consultaGeneral } from "@/lib/whatsapp";
 import { clasesBoton } from "@/components/ui/Boton";
 import { Antetitulo } from "@/components/ui/Elementos";
@@ -11,7 +11,15 @@ const PASOS = [
   { n: "3", texto: "Confirmamos stock, envío y horario" },
 ];
 
-export function PedidoWhatsapp() {
+export function PedidoWhatsapp({
+  bloque = porDefecto,
+  contacto = sitioPorDefecto,
+}: {
+  bloque?: typeof porDefecto;
+  contacto?: typeof sitioPorDefecto;
+}) {
+  const pedidoWhatsapp = bloque;
+  const sitio = contacto;
   return (
     <section className="bg-crema-50 py-16 md:py-24">
       <div className="contenedor">
@@ -45,7 +53,7 @@ export function PedidoWhatsapp() {
 
               <div className="mt-9 flex flex-wrap items-center gap-5">
                 <a
-                  href={consultaGeneral()}
+                  href={consultaGeneral(contacto.whatsapp)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={clasesBoton("whatsapp", "lg")}

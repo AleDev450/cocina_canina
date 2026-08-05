@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { obtenerProducto, precioDesde, productos } from "@/data/productos";
-import { obtenerCategoria } from "@/data/categorias";
+import { obtenerCategorias, obtenerProducto, obtenerProductos } from "@/server/catalogo";
+import { obtenerConfiguracion } from "@/server/contenido";
+import { obtenerRegla } from "@/server/recompensas";
 import { FichaProducto } from "@/components/producto/FichaProducto";
 import { TarjetaProducto } from "@/components/producto/TarjetaProducto";
 import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { CabeceraSeccion } from "@/components/ui/Elementos";
+import { precioDesde } from "@/lib/precio";
 import { precio } from "@/lib/formato";
 
-export function generateStaticParams() {
-  return productos.map((p) => ({ slug: p.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -18,18 +18,23 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const producto = obtenerProducto(slug);
-  if (!producto) return { title: "Producto no encontrado" };
 
-  return {
-    title: producto.nombre,
-    description: `${producto.descripcion} Desde ${precio(precioDesde(producto))}.`,
-    openGraph: {
-      title: `${producto.nombre} · La Cocina Canina`,
-      description: producto.beneficioPrincipal,
-      images: [producto.imagen],
-    },
-  };
+  try {
+    const producto = await obtenerProducto(slug);
+    if (!producto) return { title: "Producto no encontrado" };
+
+    return {
+      title: producto.nombre,
+      description: `${producto.descripcion} Desde ${precio(precioDesde(producto))}.`,
+      openGraph: {
+        title: `${producto.nombre} · La Cocina Canina`,
+        description: producto.beneficioPrincipal,
+        images: [producto.imagen],
+      },
+    };
+  } catch {
+    return { title: "Producto" };
+  }
 }
 
 export default async function PaginaProducto({
@@ -38,13 +43,27 @@ export default async function PaginaProducto({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const producto = obtenerProducto(slug);
+
+  const producto = await obtenerProducto(slug);
   if (!producto) notFound();
 
-  const categoria = obtenerCategoria(producto.categoria);
-  const relacionados = producto.relacionados
-    .map((s) => obtenerProducto(s))
-    .filter((p): p is NonNullable<typeof p> => Boolean(p));
+  const [categorias, todos, config, regla] = await Promise.all([
+    obtenerCategorias(),
+    obtenerProductos(),
+    obtenerConfiguracion(),
+    obtenerRegla(),
+  ]);
+
+  const categoria = categorias.find((c) => c.slug === producto.categoria);
+
+  // Relacionados explícitos; si no hay, se completa con la misma categoría.
+  const explicitos = todos.filter((p) => producto.relacionados.includes(p.slug));
+  const relacionados =
+    explicitos.length > 0
+      ? explicitos
+      : todos
+          .filter((p) => p.categoria === producto.categoria && p.slug !== producto.slug)
+          .slice(0, 3);
 
   return (
     <>
@@ -55,13 +74,22 @@ export default async function PaginaProducto({
           { nombre: "Inicio", href: "/" },
           { nombre: "Productos", href: "/productos" },
           ...(categoria
-            ? [{ nombre: categoria.nombre, href: `/productos?categoria=${categoria.slug}` }]
+            ? [
+                {
+                  nombre: categoria.nombre,
+                  href: `/productos?categoria=${categoria.slug}`,
+                },
+              ]
             : []),
           { nombre: producto.nombre },
         ]}
       />
 
-      <FichaProducto producto={producto} />
+      <FichaProducto
+        producto={producto}
+        whatsapp={config.contacto.whatsapp}
+        regla={regla}
+      />
 
       {relacionados.length > 0 ? (
         <section className="bg-crema-50 py-16 md:py-20">
@@ -71,7 +99,7 @@ export default async function PaginaProducto({
               titulo="Productos relacionados"
             />
             <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {relacionados.map((p) => (
+              {relacionados.slice(0, 3).map((p) => (
                 <TarjetaProducto key={p.slug} producto={p} compacta />
               ))}
             </div>

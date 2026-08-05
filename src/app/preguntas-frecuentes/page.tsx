@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { MessageCircle } from "lucide-react";
-import { sitio } from "@/data/sitio";
 import { consultaGeneral } from "@/lib/whatsapp";
 import { ListaFaq } from "@/components/faq/ListaFaq";
 import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { Boton } from "@/components/ui/Boton";
+import { obtenerConfiguracion, obtenerPreguntas } from "@/server/contenido";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Preguntas frecuentes",
@@ -12,7 +14,12 @@ export const metadata: Metadata = {
     "Conservación, niveles de dureza, delivery, programa de puntos, compras por mayor y alimentación BARF: todo lo que suelen preguntarnos.",
 };
 
-export default function PaginaFaq() {
+export default async function PaginaFaq() {
+  const [preguntas, config] = await Promise.all([
+    obtenerPreguntas(),
+    obtenerConfiguracion(),
+  ]);
+
   return (
     <>
       <CabeceraPagina
@@ -25,7 +32,7 @@ export default function PaginaFaq() {
 
       <section className="py-14 md:py-16">
         <div className="contenedor max-w-3xl">
-          <ListaFaq />
+          <ListaFaq preguntas={preguntas} />
         </div>
       </section>
 
@@ -38,11 +45,11 @@ export default function PaginaFaq() {
                 ¿Sigues con dudas?
               </h2>
               <p className="mt-3 text-petroleo-100">
-                Escríbenos al {sitio.telefono}. Te ayudamos a elegir el snack correcto
-                según el tamaño, la edad y la forma de masticar de tu perro.
+                Escríbenos al {config.contacto.telefono}. Te ayudamos a elegir el snack
+                correcto según el tamaño, la edad y la forma de masticar de tu perro.
               </p>
               <Boton
-                href={consultaGeneral()}
+                href={consultaGeneral(config.contacto.whatsapp)}
                 externo
                 variante="whatsapp"
                 medida="lg"

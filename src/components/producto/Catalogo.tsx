@@ -3,14 +3,14 @@
 import { useMemo, useState } from "react";
 import { ArrowUpDown, SlidersHorizontal, X } from "lucide-react";
 import type { Producto } from "@/lib/tipos";
-import { precioDesde, productos as todos } from "@/data/productos";
+import { precioDesde } from "@/lib/precio";
 import {
-  categorias,
   nombreDureza,
   nombreEdad,
   nombreProteina,
   nombreTamano,
 } from "@/data/categorias";
+import type { Categoria } from "@/lib/tipos";
 import { TarjetaProducto } from "@/components/producto/TarjetaProducto";
 import { Boton } from "@/components/ui/Boton";
 import { EstadoVacio, Pastilla } from "@/components/ui/Elementos";
@@ -35,10 +35,6 @@ const PROTEINAS = ["res", "cerdo", "pollo", "cordero", "pescado", "cabra"] as co
 const DUREZAS = ["suave", "media", "larga-duracion"] as const;
 const TAMANOS = ["pequeno", "mediano", "grande"] as const;
 const EDADES = ["cachorro", "adulto", "senior"] as const;
-
-const CATEGORIAS_SNACK = categorias.filter((c) =>
-  ["dureza-suave", "dureza-media", "larga-duracion"].includes(c.slug),
-);
 
 const PRECIO_MAXIMO = 50;
 
@@ -69,6 +65,10 @@ function alternar(lista: string[], valor: string): string[] {
 }
 
 /* ------------------------------ Sub-bloques ------------------------------ */
+
+interface PropsPanel {
+  categoriasSnack: Categoria[];
+}
 
 function GrupoFiltro({
   titulo,
@@ -115,16 +115,17 @@ function PanelFiltros({
   filtros,
   setFiltros,
   onLimpiar,
+  categoriasSnack,
 }: {
   filtros: Filtros;
   setFiltros: (f: Filtros) => void;
   onLimpiar: () => void;
-}) {
+} & PropsPanel) {
   return (
     <div className="space-y-5">
       <GrupoFiltro
         titulo="Categoría"
-        opciones={CATEGORIAS_SNACK.map((c) => ({
+        opciones={categoriasSnack.map((c) => ({
           id: c.slug,
           nombre: c.nombre.replace("Snacks de ", ""),
         }))}
@@ -245,7 +246,18 @@ function PanelFiltros({
 
 /* -------------------------------- Catálogo ------------------------------- */
 
-export function Catalogo({ categoriaInicial }: { categoriaInicial?: string }) {
+export function Catalogo({
+  productos: todos,
+  categorias,
+  categoriaInicial,
+}: {
+  productos: Producto[];
+  categorias: Categoria[];
+  categoriaInicial?: string;
+}) {
+  const categoriasSnack = categorias.filter((c) =>
+    ["dureza-suave", "dureza-media", "larga-duracion"].includes(c.slug),
+  );
   const [filtros, setFiltros] = useState<Filtros>({
     ...VACIOS,
     categorias: categoriaInicial ? [categoriaInicial] : [],
@@ -309,7 +321,7 @@ export function Catalogo({ categoriaInicial }: { categoriaInicial?: string }) {
         ordenado.sort((a, b) => b.ventas - a.ventas);
     }
     return ordenado;
-  }, [filtros, orden]);
+  }, [todos, filtros, orden]);
 
   const limpiar = () => setFiltros(VACIOS);
 
@@ -326,7 +338,7 @@ export function Catalogo({ categoriaInicial }: { categoriaInicial?: string }) {
               <Pastilla tono="suaveNaranja">{activos} activos</Pastilla>
             ) : null}
           </div>
-          <PanelFiltros filtros={filtros} setFiltros={setFiltros} onLimpiar={limpiar} />
+          <PanelFiltros filtros={filtros} setFiltros={setFiltros} onLimpiar={limpiar} categoriasSnack={categoriasSnack} />
         </div>
       </aside>
 
@@ -434,7 +446,7 @@ export function Catalogo({ categoriaInicial }: { categoriaInicial?: string }) {
             </button>
           </div>
 
-          <PanelFiltros filtros={filtros} setFiltros={setFiltros} onLimpiar={limpiar} />
+          <PanelFiltros filtros={filtros} setFiltros={setFiltros} onLimpiar={limpiar} categoriasSnack={categoriasSnack} />
 
           <Boton
             variante="primario"

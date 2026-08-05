@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useState, type FormEvent } from "react";
 import { Calculator, Info } from "lucide-react";
-import { racionDiaria, productosBarf, precioKgPara } from "@/data/barf";
+import { racionDiaria, precioKgPara } from "@/data/barf";
+import type { ProductoBarf } from "@/lib/tipos";
 import { precio } from "@/lib/formato";
 import { Boton } from "@/components/ui/Boton";
 import { Campo, GrupoOpciones, Select } from "@/components/ui/Campos";
@@ -17,12 +18,12 @@ const ACTIVIDADES: Array<{ id: Actividad; nombre: string; nota: string }> = [
   { id: "alta", nombre: "Muy activo", nota: "Corre y juega mucho" },
 ];
 
-export function CalculadorBarf() {
+export function CalculadorBarf({ productosBarf }: { productosBarf: ProductoBarf[] }) {
   const [nombre, setNombre] = useState("");
   const [peso, setPeso] = useState("12");
   const [edad, setEdad] = useState("24");
   const [actividad, setActividad] = useState<Actividad>("normal");
-  const [receta, setReceta] = useState(productosBarf[1].slug);
+  const [receta, setReceta] = useState(productosBarf[1]?.slug ?? productosBarf[0]?.slug ?? "");
   const [resultado, setResultado] = useState<ReturnType<typeof racionDiaria> | null>(null);
 
   const calcular = (e: FormEvent) => {

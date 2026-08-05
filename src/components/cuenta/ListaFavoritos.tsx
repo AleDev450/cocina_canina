@@ -1,21 +1,19 @@
 "use client";
 
 import { useTienda } from "@/context/Tienda";
-import { obtenerProducto } from "@/data/productos";
+import type { Producto } from "@/lib/tipos";
 import { TarjetaProducto } from "@/components/producto/TarjetaProducto";
 import { Boton } from "@/components/ui/Boton";
 import { EstadoVacio } from "@/components/ui/Elementos";
 
-export function ListaFavoritos() {
+export function ListaFavoritos({ productos }: { productos: Producto[] }) {
   const { favoritos, hidratado } = useTienda();
 
   if (!hidratado) {
     return <div className="h-64 rounded-3xl bg-white/50" aria-busy="true" />;
   }
 
-  const lista = favoritos
-    .map((slug) => obtenerProducto(slug))
-    .filter((p): p is NonNullable<typeof p> => Boolean(p));
+  const lista = productos.filter((p) => favoritos.includes(p.slug));
 
   if (lista.length === 0) {
     return (

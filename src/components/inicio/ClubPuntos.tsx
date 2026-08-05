@@ -1,15 +1,27 @@
 import Image from "next/image";
 import { ArrowRight, Gift, History, Sparkles } from "lucide-react";
-import { recompensas, reglaPuntos, siguienteRecompensa } from "@/data/recompensas";
-import { clienteDemo } from "@/data/cuenta";
+import type { Recompensa, ReglaPuntos } from "@/lib/tipos";
+
 import { precio } from "@/lib/formato";
 import { Boton } from "@/components/ui/Boton";
 import { Antetitulo } from "@/components/ui/Elementos";
 import { Huella } from "@/components/ui/Iconos";
 
-export function ClubPuntos() {
-  const puntos = clienteDemo.puntos;
-  const siguiente = siguienteRecompensa(puntos);
+export function ClubPuntos({
+  regla,
+  recompensas,
+  puntos,
+  nombre,
+}: {
+  regla: ReglaPuntos;
+  recompensas: Recompensa[];
+  puntos: number;
+  nombre: string;
+}) {
+  const reglaPuntos = regla;
+  const siguiente = [...recompensas]
+    .sort((a, b) => a.puntos - b.puntos)
+    .find((r) => r.puntos > puntos);
   const faltan = siguiente ? siguiente.puntos - puntos : 0;
   const progreso = siguiente ? Math.round((puntos / siguiente.puntos) * 100) : 100;
 
@@ -82,7 +94,7 @@ export function ClubPuntos() {
                 </div>
 
                 <p className="mt-6 font-display text-2xl font-medium">
-                  Hola, {clienteDemo.nombres}
+                  Hola, {nombre}
                 </p>
                 <p className="mt-1 font-display text-[3.4rem] font-semibold leading-none">
                   {puntos}

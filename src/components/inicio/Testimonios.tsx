@@ -2,10 +2,10 @@
 
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { testimonios } from "@/data/contenido";
+import type { Testimonio } from "@/lib/tipos";
 import { AvatarMascota, CabeceraSeccion, Estrellas } from "@/components/ui/Elementos";
 
-export function Testimonios() {
+export function Testimonios({ testimonios }: { testimonios: Testimonio[] }) {
   const pista = useRef<HTMLDivElement>(null);
 
   const mover = (direccion: 1 | -1) => {

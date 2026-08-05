@@ -2,13 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { categoriasFaq, preguntas } from "@/data/contenido";
+import { categoriasFaq } from "@/data/contenido";
+import type { PreguntaFrecuente } from "@/lib/tipos";
 import { cx, normalizar } from "@/lib/formato";
 import { Acordeon } from "@/components/ui/Acordeon";
 import { EstadoVacio } from "@/components/ui/Elementos";
 import { Boton } from "@/components/ui/Boton";
 
-export function ListaFaq() {
+export function ListaFaq({ preguntas }: { preguntas: PreguntaFrecuente[] }) {
   const [categoria, setCategoria] = useState("todas");
   const [consulta, setConsulta] = useState("");
 
@@ -20,7 +21,7 @@ export function ListaFaq() {
         (p) =>
           q.length < 2 || normalizar(`${p.pregunta} ${p.respuesta}`).includes(q),
       );
-  }, [categoria, consulta]);
+  }, [preguntas, categoria, consulta]);
 
   return (
     <div>

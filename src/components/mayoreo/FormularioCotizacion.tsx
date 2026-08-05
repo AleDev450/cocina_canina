@@ -1,41 +1,37 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useActionState, useState } from "react";
 import { CheckCircle2, MessageCircle, Send } from "lucide-react";
 import { cotizacionMayor } from "@/lib/whatsapp";
 import { tiposNegocio, ANTICIPACION_MAYOR } from "@/data/mayoreo";
+import { solicitarCotizacion } from "@/server/acciones/pedidos";
+import {
+  Aviso,
+  BotonEnviar,
+  ErrorCampo,
+  ESTADO_INICIAL,
+} from "@/components/ui/Formulario";
 import { Boton, clasesBoton } from "@/components/ui/Boton";
 import { AreaTexto, Campo, Select } from "@/components/ui/Campos";
 import { EstadoVacio } from "@/components/ui/Elementos";
 
-const HOY = new Date();
-const MINIMO = new Date(HOY.getTime() + 3 * 24 * 60 * 60 * 1000)
-  .toISOString()
-  .slice(0, 10);
+const MINIMO = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-export function FormularioCotizacion() {
-  const [enviado, setEnviado] = useState(false);
+export function FormularioCotizacion({ whatsapp }: { whatsapp?: string }) {
+  const [estado, accion] = useActionState(solicitarCotizacion, ESTADO_INICIAL);
+
+  // Se conservan para poder armar el mensaje de WhatsApp tras el envío.
   const [datos, setDatos] = useState({
     negocio: "",
-    ruc: "",
-    telefono: "",
-    correo: "",
-    tipo: tiposNegocio[0],
     productos: "",
     cantidad: "",
     fecha: MINIMO,
-    mensaje: "",
   });
 
-  const actualizar = (campo: keyof typeof datos) => (valor: string) =>
+  const recordar = (campo: keyof typeof datos) => (valor: string) =>
     setDatos((d) => ({ ...d, [campo]: valor }));
 
-  const enviar = (e: FormEvent) => {
-    e.preventDefault();
-    setEnviado(true);
-  };
-
-  if (enviado) {
+  if (estado.ok) {
     return (
       <div className="rounded-blob border border-petroleo-700/10 bg-white p-8 md:p-12">
         <EstadoVacio
@@ -45,12 +41,7 @@ export function FormularioCotizacion() {
           accion={
             <div className="flex flex-wrap justify-center gap-3">
               <a
-                href={cotizacionMayor({
-                  negocio: datos.negocio,
-                  productos: datos.productos,
-                  cantidad: datos.cantidad,
-                  fecha: datos.fecha,
-                })}
+                href={cotizacionMayor(datos, whatsapp)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={clasesBoton("whatsapp", "md")}
@@ -58,8 +49,8 @@ export function FormularioCotizacion() {
                 <MessageCircle className="h-4 w-4" />
                 Enviar también por WhatsApp
               </a>
-              <Boton variante="contorno" medida="md" onClick={() => setEnviado(false)}>
-                Hacer otra solicitud
+              <Boton href="/productos" variante="contorno" medida="md">
+                Seguir viendo el catálogo
               </Boton>
             </div>
           }
@@ -70,7 +61,7 @@ export function FormularioCotizacion() {
 
   return (
     <form
-      onSubmit={enviar}
+      action={accion}
       className="rounded-blob border border-petroleo-700/10 bg-white p-7 md:p-10"
     >
       <h2 className="font-display text-2xl font-semibold text-petroleo-900">
@@ -78,89 +69,110 @@ export function FormularioCotizacion() {
       </h2>
       <p className="mt-2 text-sm text-grafito">{ANTICIPACION_MAYOR}</p>
 
-      <div className="mt-8 grid gap-5 sm:grid-cols-2">
-        <Campo
-          etiqueta="Nombre o razón social"
-          required
-          placeholder="Mascotas del Sur E.I.R.L."
-          value={datos.negocio}
-          onChange={(e) => actualizar("negocio")(e.target.value)}
-          contenedor="sm:col-span-2"
-        />
+      <div className="mt-6">
+        <Aviso estado={estado} />
+      </div>
+
+      <div className="mt-6 grid gap-5 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <Campo
+            etiqueta="Nombre o razón social"
+            name="negocio"
+            required
+            placeholder="Mascotas del Sur E.I.R.L."
+            onChange={(e) => recordar("negocio")(e.target.value)}
+          />
+          <ErrorCampo estado={estado} campo="negocio" />
+        </div>
+
         <Campo
           etiqueta="RUC"
+          name="ruc"
           opcional
           inputMode="numeric"
           placeholder="20123456789"
-          value={datos.ruc}
-          onChange={(e) => actualizar("ruc")(e.target.value)}
         />
-        <Select
-          etiqueta="Tipo de negocio"
-          value={datos.tipo}
-          onChange={(e) => actualizar("tipo")(e.target.value)}
-        >
+
+        <Select etiqueta="Tipo de negocio" name="tipoNegocio" defaultValue={tiposNegocio[0]}>
           {tiposNegocio.map((t) => (
             <option key={t} value={t}>
               {t}
             </option>
           ))}
         </Select>
-        <Campo
-          etiqueta="Teléfono"
-          required
-          type="tel"
-          placeholder="922 035 995"
-          value={datos.telefono}
-          onChange={(e) => actualizar("telefono")(e.target.value)}
-        />
-        <Campo
-          etiqueta="Correo"
-          required
-          type="email"
-          placeholder="compras@tunegocio.pe"
-          value={datos.correo}
-          onChange={(e) => actualizar("correo")(e.target.value)}
-        />
-        <Campo
-          etiqueta="Productos de interés"
-          required
-          placeholder="Orejas de cerdo, tráqueas de res…"
-          value={datos.productos}
-          onChange={(e) => actualizar("productos")(e.target.value)}
-          contenedor="sm:col-span-2"
-        />
-        <Campo
-          etiqueta="Cantidad aproximada"
-          required
-          placeholder="5 docenas + 10 kg"
-          value={datos.cantidad}
-          onChange={(e) => actualizar("cantidad")(e.target.value)}
-        />
-        <Campo
-          etiqueta="Fecha requerida"
-          required
-          type="date"
-          min={MINIMO}
-          value={datos.fecha}
-          onChange={(e) => actualizar("fecha")(e.target.value)}
-          ayuda="Mínimo 3 días desde hoy"
-        />
+
+        <div>
+          <Campo
+            etiqueta="Teléfono"
+            name="telefono"
+            required
+            type="tel"
+            placeholder="922 035 995"
+          />
+          <ErrorCampo estado={estado} campo="telefono" />
+        </div>
+
+        <div>
+          <Campo
+            etiqueta="Correo"
+            name="correo"
+            required
+            type="email"
+            placeholder="compras@tunegocio.pe"
+          />
+          <ErrorCampo estado={estado} campo="correo" />
+        </div>
+
+        <div className="sm:col-span-2">
+          <Campo
+            etiqueta="Productos de interés"
+            name="productos"
+            required
+            placeholder="Orejas de cerdo, tráqueas de res…"
+            onChange={(e) => recordar("productos")(e.target.value)}
+          />
+          <ErrorCampo estado={estado} campo="productos" />
+        </div>
+
+        <div>
+          <Campo
+            etiqueta="Cantidad aproximada"
+            name="cantidad"
+            required
+            placeholder="5 docenas + 10 kg"
+            onChange={(e) => recordar("cantidad")(e.target.value)}
+          />
+          <ErrorCampo estado={estado} campo="cantidad" />
+        </div>
+
+        <div>
+          <Campo
+            etiqueta="Fecha requerida"
+            name="fecha"
+            required
+            type="date"
+            min={MINIMO}
+            defaultValue={MINIMO}
+            onChange={(e) => recordar("fecha")(e.target.value)}
+            ayuda="Mínimo 3 días desde hoy"
+          />
+          <ErrorCampo estado={estado} campo="fecha" />
+        </div>
+
         <AreaTexto
           etiqueta="Mensaje"
+          name="mensaje"
           opcional
           placeholder="Cuéntanos si necesitas etiquetado especial, frecuencia de reposición o algo más."
-          value={datos.mensaje}
-          onChange={(e) => actualizar("mensaje")(e.target.value)}
           contenedor="sm:col-span-2"
         />
       </div>
 
       <div className="mt-8 flex flex-wrap items-center gap-4">
-        <Boton type="submit" variante="primario" medida="lg">
+        <BotonEnviar medida="lg" enviando="Enviando…">
           <Send className="h-4 w-4" />
           Solicitar cotización
-        </Boton>
+        </BotonEnviar>
         <p className="flex items-center gap-1.5 text-xs text-grafito">
           <CheckCircle2 className="h-3.5 w-3.5 text-hoja-500" />
           Respondemos en menos de 24 horas hábiles

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ArrowRight, MessageCircle } from "lucide-react";
-import { hero } from "@/data/sitio";
+import { hero as heroPorDefecto } from "@/data/sitio";
 import { consultaGeneral } from "@/lib/whatsapp";
 import { Boton } from "@/components/ui/Boton";
 import { SelloCircular } from "@/components/ui/Elementos";
@@ -34,7 +34,13 @@ const FLOTANTES = [
   },
 ];
 
-export function Hero() {
+export function Hero({
+  hero = heroPorDefecto,
+  whatsapp,
+}: {
+  hero?: typeof heroPorDefecto;
+  whatsapp?: string;
+}) {
   return (
     <section className="relative isolate overflow-hidden bg-crema-50">
       {/* Fondo */}
@@ -94,7 +100,7 @@ export function Hero() {
               Ver productos
               <ArrowRight className="h-4 w-4" />
             </Boton>
-            <Boton href={consultaGeneral()} externo variante="contorno" medida="lg">
+            <Boton href={consultaGeneral(whatsapp)} externo variante="contorno" medida="lg">
               <MessageCircle className="h-4 w-4 text-[#25D366]" />
               Hacer pedido por WhatsApp
             </Boton>

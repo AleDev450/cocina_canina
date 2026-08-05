@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { categorias } from "@/data/categorias";
-import { productos } from "@/data/productos";
+import type { Categoria } from "@/lib/tipos";
+
 import { CabeceraSeccion } from "@/components/ui/Elementos";
 import { Hoja, Hueso, Huella, Olla, Plato } from "@/components/ui/Iconos";
 import { cx } from "@/lib/formato";
@@ -25,7 +25,13 @@ const DESTINO: Record<string, string> = {
 /** Las tres primeras ocupan una fila; BARF y por mayor van más anchas abajo. */
 const AMPLITUD = ["lg:col-span-2", "lg:col-span-2", "lg:col-span-2", "lg:col-span-3", "lg:col-span-3"];
 
-export function Categorias() {
+export function Categorias({
+  categorias,
+  conteos,
+}: {
+  categorias: Categoria[];
+  conteos: Record<string, number>;
+}) {
   return (
     <section id="categorias" className="bg-crema-50 py-16 md:py-24">
       <div className="contenedor">
@@ -49,12 +55,7 @@ export function Categorias() {
             const Icono = ICONO[cat.icono];
             const acento = ACENTO[cat.acento];
             const destino = DESTINO[cat.slug] ?? `/productos?categoria=${cat.slug}`;
-            const total =
-              cat.slug === "barf"
-                ? 3
-                : cat.slug === "por-mayor"
-                  ? 11
-                  : productos.filter((p) => p.categoria === cat.slug).length;
+            const total = conteos[cat.slug] ?? 0;
 
             return (
               <Link

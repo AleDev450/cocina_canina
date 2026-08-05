@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { ArrowRight, MessageCircle } from "lucide-react";
-import { quienesSomos, sitio } from "@/data/sitio";
+import { obtenerNosotros, obtenerConfiguracion } from "@/server/contenido";
 import { consultaGeneral } from "@/lib/whatsapp";
 import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { Boton } from "@/components/ui/Boton";
@@ -48,7 +48,15 @@ const CIFRAS = [
   { valor: "100%", texto: "producción artesanal" },
 ];
 
-export default function PaginaNosotros() {
+export const dynamic = "force-dynamic";
+
+export default async function PaginaNosotros() {
+  const [quienesSomos, config] = await Promise.all([
+    obtenerNosotros(),
+    obtenerConfiguracion(),
+  ]);
+  const sitio = config.contacto;
+
   return (
     <>
       <CabeceraPagina
@@ -127,7 +135,7 @@ export default function PaginaNosotros() {
                 Ver el catálogo
                 <ArrowRight className="h-4 w-4" />
               </Boton>
-              <Boton href={consultaGeneral()} externo variante="contorno" medida="lg">
+              <Boton href={consultaGeneral(sitio.whatsapp)} externo variante="contorno" medida="lg">
                 <MessageCircle className="h-4 w-4 text-[#25D366]" />
                 Conversemos
               </Boton>
@@ -203,7 +211,7 @@ export default function PaginaNosotros() {
             texto={`Escríbenos al ${sitio.telefono} y te ayudamos a armar el pedido según su tamaño, edad y forma de masticar. Atendemos ${sitio.horario.toLowerCase()}.`}
           />
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Boton href={consultaGeneral()} externo variante="whatsapp" medida="lg">
+            <Boton href={consultaGeneral(sitio.whatsapp)} externo variante="whatsapp" medida="lg">
               <MessageCircle className="h-4 w-4" />
               Escribir por WhatsApp
             </Boton>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Instagram, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
-import { navegacion, politicas, sitio } from "@/data/sitio";
+import { navegacion, politicas, sitio as sitioPorDefecto } from "@/data/sitio";
 import { consultaGeneral } from "@/lib/whatsapp";
 import { Logo } from "@/components/ui/Elementos";
 import { Huella, Onda } from "@/components/ui/Iconos";
@@ -22,7 +22,10 @@ const cuenta = [
   { nombre: "Favoritos", href: "/cuenta/favoritos" },
 ];
 
-export function PieDePagina() {
+type Contacto = typeof sitioPorDefecto;
+
+export function PieDePagina({ contacto = sitioPorDefecto }: { contacto?: Contacto }) {
+  const sitio = contacto;
   return (
     <footer className="relative mt-auto bg-petroleo-800 text-petroleo-100">
       <Onda className="absolute -top-[1px] left-0 h-10 w-full text-crema-50" invertida />

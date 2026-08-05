@@ -4,21 +4,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
-import { productos, precioDesde } from "@/data/productos";
 import { nombreDureza } from "@/data/categorias";
 import { useTienda } from "@/context/Tienda";
 import { cx, normalizar, precio } from "@/lib/formato";
 
-const SUGERENCIAS = [
-  "Tráquea",
-  "Oreja",
-  "Patitas de pollo",
-  "Cuerno",
-  "Pejerrey",
-  "BARF",
-];
+export interface ProductoBuscable {
+  slug: string;
+  nombre: string;
+  dureza: string;
+  beneficioPrincipal: string;
+  descripcion: string;
+  proteinas: string[];
+  imagen: string;
+  precioDesde: number;
+}
 
-export function Buscador() {
+const SUGERENCIAS = ["Tráquea", "Oreja", "Patitas de pollo", "Cuerno", "Pejerrey", "BARF"];
+
+export function Buscador({ productos }: { productos: ProductoBuscable[] }) {
   const { buscadorAbierto, setBuscadorAbierto } = useTienda();
   const [consulta, setConsulta] = useState("");
   const entrada = useRef<HTMLInputElement>(null);
@@ -48,13 +51,13 @@ export function Buscador() {
           p.nombre,
           p.beneficioPrincipal,
           p.descripcion,
-          nombreDureza[p.dureza],
+          nombreDureza[p.dureza] ?? "",
           ...p.proteinas,
         ].join(" ");
         return normalizar(campos).includes(q);
       })
       .slice(0, 6);
-  }, [consulta]);
+  }, [consulta, productos]);
 
   return (
     <div
@@ -142,6 +145,7 @@ export function Buscador() {
                           width={100}
                           height={100}
                           className="h-11 w-11 object-contain"
+                          unoptimized={p.imagen.startsWith("http")}
                         />
                       </span>
                       <span className="min-w-0 flex-1">
@@ -153,7 +157,7 @@ export function Buscador() {
                         </span>
                       </span>
                       <span className="shrink-0 font-display text-base font-semibold text-petroleo-900">
-                        {precio(precioDesde(p))}
+                        {precio(p.precioDesde)}
                       </span>
                     </Link>
                   </li>

@@ -16,7 +16,8 @@ import {
 } from "lucide-react";
 import type { Producto } from "@/lib/tipos";
 import { nombreDureza, nombreEdad, nombreProteina, nombreTamano } from "@/data/categorias";
-import { puntosPorMonto } from "@/data/recompensas";
+import type { ReglaPuntos } from "@/lib/tipos";
+
 import { useTienda } from "@/context/Tienda";
 import { consultaProducto } from "@/lib/whatsapp";
 import { cx, precio } from "@/lib/formato";
@@ -30,7 +31,21 @@ const TONO_DUREZA: Record<string, string> = {
   "larga-duracion": "bg-coral-100 text-coral-500",
 };
 
-export function FichaProducto({ producto }: { producto: Producto }) {
+export function FichaProducto({
+  producto,
+  whatsapp,
+  regla,
+}: {
+  producto: Producto;
+  whatsapp?: string;
+  regla: ReglaPuntos;
+}) {
+  const puntosPorMonto = (monto: number) =>
+    monto < regla.compraMinima
+      ? 0
+      : Math.floor(monto / regla.montoPorPunto) *
+        regla.puntosOtorgados *
+        regla.multiplicador;
   const { agregar, alternarFavorito, esFavorito, hidratado } = useTienda();
   const disponibles = producto.presentaciones.filter((p) => p.stock > 0);
   const [presentacion, setPresentacion] = useState(
@@ -272,7 +287,7 @@ export function FichaProducto({ producto }: { producto: Producto }) {
             </div>
 
             <a
-              href={consultaProducto(producto.nombre, presentacion.etiqueta)}
+              href={consultaProducto(producto.nombre, presentacion.etiqueta, whatsapp)}
               target="_blank"
               rel="noopener noreferrer"
               className={clasesBoton("whatsapp", "md", "mt-3 w-full")}

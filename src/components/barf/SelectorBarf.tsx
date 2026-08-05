@@ -5,7 +5,8 @@ import { useState } from "react";
 import { Check, Minus, Plus, ShoppingBag, TrendingDown } from "lucide-react";
 import type { FrecuenciaBarf, ProductoBarf } from "@/lib/tipos";
 import { ahorroPorVolumen, frecuenciasBarf, precioKgPara } from "@/data/barf";
-import { puntosPorMonto } from "@/data/recompensas";
+import type { ReglaPuntos } from "@/lib/tipos";
+
 import { useTienda } from "@/context/Tienda";
 import { cx, precio } from "@/lib/formato";
 import { Boton } from "@/components/ui/Boton";
@@ -17,7 +18,19 @@ const ACENTO: Record<string, { chip: string; barra: string }> = {
   ambar: { chip: "bg-ambar-100 text-ambar-500", barra: "bg-ambar-500" },
 };
 
-export function SelectorBarf({ producto }: { producto: ProductoBarf }) {
+export function SelectorBarf({
+  producto,
+  regla,
+}: {
+  producto: ProductoBarf;
+  regla: ReglaPuntos;
+}) {
+  const puntosPorMonto = (monto: number) =>
+    monto < regla.compraMinima
+      ? 0
+      : Math.floor(monto / regla.montoPorPunto) *
+        regla.puntosOtorgados *
+        regla.multiplicador;
   const { agregar } = useTienda();
   const [kilos, setKilos] = useState(producto.rangos[0].desde);
   const [frecuencia, setFrecuencia] = useState<FrecuenciaBarf>("unica");

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ArrowRight, Calculator, Snowflake } from "lucide-react";
-import { productosBarf } from "@/data/barf";
+import type { ProductoBarf } from "@/lib/tipos";
 import { precio } from "@/lib/formato";
 import { Boton } from "@/components/ui/Boton";
 import { Antetitulo } from "@/components/ui/Elementos";
@@ -12,7 +12,7 @@ const ACENTO: Record<string, string> = {
   ambar: "bg-ambar-500",
 };
 
-export function BarfInicio() {
+export function BarfInicio({ productosBarf }: { productosBarf: ProductoBarf[] }) {
   return (
     <section id="barf" className="relative bg-petroleo-800 text-white">
       <Onda className="block h-8 w-full text-white md:h-12" invertida />

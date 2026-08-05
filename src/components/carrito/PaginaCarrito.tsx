@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Minus, Plus, Sparkles, Tag, Trash2 } from "lucide-react";
 import { useTienda } from "@/context/Tienda";
-import { reglaPuntos } from "@/data/recompensas";
+
 import { enlacePedido } from "@/lib/whatsapp";
 import { cx, precio } from "@/lib/formato";
 import { Boton, clasesBoton } from "@/components/ui/Boton";
@@ -29,6 +29,7 @@ export function PaginaCarrito() {
 
   const [codigo, setCodigo] = useState("");
   const [aviso, setAviso] = useState<{ ok: boolean; mensaje: string } | null>(null);
+  const [validando, setValidando] = useState(false);
 
   if (!hidratado) {
     return <div className="contenedor py-24" aria-busy="true" />;
@@ -209,14 +210,17 @@ export function PaginaCarrito() {
                   />
                   <button
                     type="button"
-                    onClick={() => {
-                      const r = aplicarCupon(codigo);
+                    disabled={validando}
+                    onClick={async () => {
+                      setValidando(true);
+                      const r = await aplicarCupon(codigo);
                       setAviso(r);
                       if (r.ok) setCodigo("");
+                      setValidando(false);
                     }}
                     className={clasesBoton("petroleo", "sm")}
                   >
-                    Aplicar
+                    {validando ? "Validando…" : "Aplicar"}
                   </button>
                 </div>
                 {aviso ? (
@@ -262,7 +266,7 @@ export function PaginaCarrito() {
             <Sparkles className="h-4 w-4 shrink-0 text-naranja-500" />
             <p className="text-xs text-naranja-800">
               Ganarás <strong className="font-bold">{puntosDelCarrito} puntos</strong> ·
-              1 punto por cada S/ {reglaPuntos.montoPorPunto}
+              se acreditan al entregarse
             </p>
           </div>
 

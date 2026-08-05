@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { productosDestacados } from "@/data/productos";
+import type { Producto } from "@/lib/tipos";
 import { TarjetaProducto } from "@/components/producto/TarjetaProducto";
 import { CabeceraSeccion } from "@/components/ui/Elementos";
 
-export function Destacados() {
-  const lista = productosDestacados().slice(0, 8);
+export function Destacados({ productos }: { productos: Producto[] }) {
+  const lista = productos.slice(0, 8);
 
   return (
     <section className="bg-white py-16 md:py-24">

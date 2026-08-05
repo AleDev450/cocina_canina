@@ -1,16 +1,20 @@
 import Image from "next/image";
 import { ArrowRight, MessageCircle } from "lucide-react";
-import { preguntas } from "@/data/contenido";
+import type { PreguntaFrecuente } from "@/lib/tipos";
 import { consultaGeneral } from "@/lib/whatsapp";
 import { Acordeon } from "@/components/ui/Acordeon";
 import { Boton } from "@/components/ui/Boton";
 import { Antetitulo } from "@/components/ui/Elementos";
 
-const DESTACADAS = ["f1", "f3", "f4", "f6", "f8", "f13"];
-
-export function FaqInicio() {
+export function FaqInicio({
+  preguntas,
+  whatsapp,
+}: {
+  preguntas: PreguntaFrecuente[];
+  whatsapp?: string;
+}) {
   const items = preguntas
-    .filter((p) => DESTACADAS.includes(p.id))
+    .slice(0, 6)
     .map((p) => ({ id: p.id, pregunta: p.pregunta, respuesta: p.respuesta }));
 
   return (
@@ -31,7 +35,7 @@ export function FaqInicio() {
               Ver todas
               <ArrowRight className="h-4 w-4" />
             </Boton>
-            <Boton href={consultaGeneral()} externo variante="contorno" medida="md">
+            <Boton href={consultaGeneral(whatsapp)} externo variante="contorno" medida="md">
               <MessageCircle className="h-4 w-4 text-[#25D366]" />
               Preguntar por WhatsApp
             </Boton>

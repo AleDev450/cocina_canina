@@ -8,9 +8,21 @@ import { MODULOS } from "@/data/modulosAdmin";
 import { cx } from "@/lib/formato";
 import { Logo } from "@/components/ui/Elementos";
 
-export function NavAdmin() {
+/**
+ * Menú lateral del CMS. `grupos` limita lo que se muestra según el rol;
+ * `null` significa acceso total (administrador).
+ */
+export function NavAdmin({
+  grupos,
+  rol,
+}: {
+  grupos: string[] | null;
+  rol: string;
+}) {
   const ruta = usePathname();
   const [abierto, setAbierto] = useState(false);
+
+  const visibles = MODULOS.filter((g) => grupos === null || grupos.includes(g.grupo));
 
   const contenido = (
     <>
@@ -28,8 +40,15 @@ export function NavAdmin() {
         </button>
       </div>
 
-      <nav className="flex-1 space-y-6 overflow-y-auto px-3 pb-6" aria-label="Módulos del CMS">
-        {MODULOS.map((g) => (
+      <p className="mx-5 mb-4 rounded-full bg-white/10 px-3 py-1.5 text-center text-[0.62rem] font-bold uppercase tracking-[0.12em] text-naranja-300">
+        {rol}
+      </p>
+
+      <nav
+        className="flex-1 space-y-6 overflow-y-auto px-3 pb-6"
+        aria-label="Módulos del CMS"
+      >
+        {visibles.map((g) => (
           <div key={g.grupo}>
             <p className="px-3 pb-2 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-petroleo-100/50">
               {g.grupo}
@@ -74,12 +93,10 @@ export function NavAdmin() {
 
   return (
     <>
-      {/* Escritorio */}
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-petroleo-900 lg:flex">
         {contenido}
       </aside>
 
-      {/* Móvil */}
       <button
         type="button"
         onClick={() => setAbierto(true)}

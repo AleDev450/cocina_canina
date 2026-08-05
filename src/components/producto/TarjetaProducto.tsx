@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { Heart, Plus } from "lucide-react";
 import type { Producto } from "@/lib/tipos";
-import { precioDesde } from "@/data/productos";
-import { nombreDureza, nombreEtiqueta, obtenerCategoria } from "@/data/categorias";
+import { nombreDesdeSlug, precioDesde } from "@/lib/precio";
+import { nombreDureza, nombreEtiqueta } from "@/data/categorias";
 import { useTienda } from "@/context/Tienda";
 import { cx, precio } from "@/lib/formato";
 import { Etiqueta, type Tono } from "@/components/ui/Elementos";
@@ -35,7 +35,6 @@ export function TarjetaProducto({
   const { agregar, alternarFavorito, esFavorito, hidratado } = useTienda();
   const [presentacion, setPresentacion] = useState(producto.presentaciones[0]);
 
-  const categoria = obtenerCategoria(producto.categoria);
   const agotado = producto.presentaciones.every((p) => p.stock === 0);
   const pocoStock = !agotado && producto.presentaciones.every((p) => p.stock <= 6);
   const favorito = hidratado && esFavorito(producto.slug);
@@ -102,7 +101,7 @@ export function TarjetaProducto({
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-center justify-between gap-2">
           <span className="text-[0.66rem] font-bold uppercase tracking-[0.12em] text-grafito">
-            {categoria?.nombre.replace("Snacks de ", "") ?? producto.categoria}
+            {nombreDesdeSlug(producto.categoria)}
           </span>
           <span
             className={cx(

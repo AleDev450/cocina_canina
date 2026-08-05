@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Droplets, HeartPulse, Snowflake, Sparkles } from "lucide-react";
-import { productosBarf } from "@/data/barf";
-import { preguntas } from "@/data/contenido";
+import { obtenerBarf } from "@/server/catalogo";
+import { obtenerPreguntas } from "@/server/contenido";
+import { obtenerRegla } from "@/server/recompensas";
+
 import { SelectorBarf } from "@/components/barf/SelectorBarf";
 import { CalculadorBarf } from "@/components/barf/CalculadorBarf";
 import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
@@ -41,7 +43,15 @@ const BENEFICIOS = [
   },
 ];
 
-export default function PaginaBarf() {
+export const dynamic = "force-dynamic";
+
+export default async function PaginaBarf() {
+  const [productosBarf, preguntas, regla] = await Promise.all([
+    obtenerBarf(),
+    obtenerPreguntas(),
+    obtenerRegla(),
+  ]);
+
   const faqBarf = preguntas
     .filter((p) => p.categoria === "barf")
     .map((p) => ({ id: p.id, pregunta: p.pregunta, respuesta: p.respuesta }));
@@ -96,13 +106,13 @@ export default function PaginaBarf() {
 
           <div className="mt-12 grid gap-6 lg:grid-cols-3">
             {productosBarf.map((p) => (
-              <SelectorBarf key={p.slug} producto={p} />
+              <SelectorBarf key={p.slug} producto={p} regla={regla} />
             ))}
           </div>
         </div>
       </section>
 
-      <CalculadorBarf />
+      <CalculadorBarf productosBarf={productosBarf} />
 
       {/* Preguntas */}
       <section className="bg-white py-16 md:py-20">

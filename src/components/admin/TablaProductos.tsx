@@ -1,41 +1,44 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Pencil, Plus, Search, Star, Trash2 } from "lucide-react";
-import { productos as todos, precioDesde, stockTotal } from "@/data/productos";
-import { categorias, nombreDureza, nombreEtiqueta } from "@/data/categorias";
+import { Pencil, Search, Star, Trash2 } from "lucide-react";
+import type { Producto, Categoria } from "@/lib/tipos";
+import {
+  alternarProductoActivo,
+  alternarProductoDestacado,
+  eliminarProducto,
+} from "@/server/acciones/catalogo";
+import { nombreDureza, nombreEtiqueta } from "@/data/categorias";
 import { cx, normalizar, precio } from "@/lib/formato";
-import { Boton } from "@/components/ui/Boton";
-import { Etiqueta, Pastilla } from "@/components/ui/Elementos";
+import { Pastilla } from "@/components/ui/Elementos";
 import { Panel, Tabla } from "@/components/admin/Piezas";
+import { BotonAccion, Interruptor } from "@/components/admin/Controles";
 
-const CATEGORIAS = categorias.filter((c) =>
-  ["dureza-suave", "dureza-media", "larga-duracion"].includes(c.slug),
-);
+type Fila = Producto & { id: string; activo: boolean };
 
-export function TablaProductos() {
+export function TablaProductos({
+  productos,
+  categorias,
+}: {
+  productos: Fila[];
+  categorias: Categoria[];
+}) {
   const [consulta, setConsulta] = useState("");
   const [categoria, setCategoria] = useState("todas");
-  const [inactivos, setInactivos] = useState<string[]>([]);
 
   const lista = useMemo(() => {
     const q = normalizar(consulta.trim());
-    return todos.filter(
+    return productos.filter(
       (p) =>
         (categoria === "todas" || p.categoria === categoria) &&
-        (q.length < 2 || normalizar(p.nombre).includes(q)),
+        (q.length < 2 || normalizar(`${p.nombre} ${p.slug}`).includes(q)),
     );
-  }, [consulta, categoria]);
-
-  const alternarActivo = (slug: string) =>
-    setInactivos((a) =>
-      a.includes(slug) ? a.filter((s) => s !== slug) : [...a, slug],
-    );
+  }, [productos, consulta, categoria]);
 
   return (
     <Panel>
-      {/* Filtros */}
       <div className="flex flex-wrap items-center gap-3 border-b border-petroleo-700/10 p-5">
         <div className="relative min-w-0 flex-1">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-grafito" />
@@ -49,7 +52,7 @@ export function TablaProductos() {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {[{ slug: "todas", nombre: "Todas" }, ...CATEGORIAS].map((c) => (
+          {[{ slug: "todas", nombre: "Todas" }, ...categorias].map((c) => (
             <button
               key={c.slug}
               type="button"
@@ -65,11 +68,6 @@ export function TablaProductos() {
             </button>
           ))}
         </div>
-
-        <Boton variante="primario" medida="sm">
-          <Plus className="h-3.5 w-3.5" />
-          Nuevo producto
-        </Boton>
       </div>
 
       <Tabla
@@ -77,22 +75,28 @@ export function TablaProductos() {
           "Producto",
           "Categoría",
           "Dureza",
-          "Presentaciones",
-          "Precio desde",
+          "Present.",
+          "Desde",
           "Stock",
           "Etiquetas",
-          "Estado",
+          "Destacado",
+          "Activo",
           "",
         ]}
       >
         {lista.map((p) => {
-          const activo = !inactivos.includes(p.slug);
-          const stock = stockTotal(p);
+          const stock = p.presentaciones.reduce((t, v) => t + v.stock, 0);
+          const desde = p.presentaciones.length
+            ? Math.min(...p.presentaciones.map((v) => v.precio))
+            : 0;
 
           return (
             <tr
-              key={p.slug}
-              className={cx("transition-colors hover:bg-crema-50", !activo && "opacity-55")}
+              key={p.id}
+              className={cx(
+                "transition-colors hover:bg-crema-50",
+                !p.activo && "opacity-55",
+              )}
             >
               <td className="px-5 py-3">
                 <div className="flex items-center gap-3">
@@ -103,28 +107,32 @@ export function TablaProductos() {
                       width={80}
                       height={80}
                       className="h-9 w-9 object-contain"
+                      unoptimized={p.imagen.startsWith("http")}
                     />
                   </span>
                   <span className="min-w-0">
-                    <span className="flex items-center gap-1.5">
-                      <span className="font-semibold text-petroleo-900">{p.nombre}</span>
-                      {p.destacado ? (
-                        <Star className="h-3.5 w-3.5 fill-naranja-500 text-naranja-500" />
-                      ) : null}
-                    </span>
+                    <Link
+                      href={`/admin/productos/${p.slug}`}
+                      className="font-semibold text-petroleo-900 hover:text-naranja-600"
+                    >
+                      {p.nombre}
+                    </Link>
                     <span className="block text-xs text-grafito">/{p.slug}</span>
                   </span>
                 </div>
               </td>
               <td className="px-5 py-3 text-grafito">
-                {p.categoria.replace("dureza-", "").replace("-", " ")}
+                {categorias.find((c) => c.slug === p.categoria)?.nombre.replace(
+                  "Snacks de ",
+                  "",
+                ) ?? p.categoria}
               </td>
               <td className="px-5 py-3 text-grafito">{nombreDureza[p.dureza]}</td>
               <td className="px-5 py-3 tabular-nums text-grafito">
                 {p.presentaciones.length}
               </td>
               <td className="px-5 py-3 font-semibold tabular-nums text-petroleo-900">
-                {precio(precioDesde(p))}
+                {precio(desde)}
               </td>
               <td className="px-5 py-3">
                 <span
@@ -154,41 +162,45 @@ export function TablaProductos() {
                 </div>
               </td>
               <td className="px-5 py-3">
-                <button
-                  type="button"
-                  onClick={() => alternarActivo(p.slug)}
-                  role="switch"
-                  aria-checked={activo}
-                  aria-label={`${activo ? "Desactivar" : "Activar"} ${p.nombre}`}
-                  className={cx(
-                    "relative h-6 w-11 rounded-full transition-colors",
-                    activo ? "bg-hoja-500" : "bg-crema-300",
-                  )}
+                <BotonAccion
+                  etiqueta={`${p.destacado ? "Quitar de" : "Marcar como"} destacado: ${p.nombre}`}
+                  accion={() => alternarProductoDestacado(p.id, !p.destacado)}
+                  className="grid h-8 w-8 place-items-center rounded-lg transition-colors hover:bg-crema-100"
                 >
-                  <span
+                  <Star
                     className={cx(
-                      "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform",
-                      activo ? "translate-x-[1.375rem]" : "translate-x-0.5",
+                      "h-4 w-4",
+                      p.destacado
+                        ? "fill-naranja-500 text-naranja-500"
+                        : "text-grafito/50",
                     )}
                   />
-                </button>
+                </BotonAccion>
+              </td>
+              <td className="px-5 py-3">
+                <Interruptor
+                  activo={p.activo}
+                  etiqueta={`Activar o desactivar ${p.nombre}`}
+                  alCambiar={(valor) => alternarProductoActivo(p.id, valor)}
+                />
               </td>
               <td className="px-5 py-3">
                 <div className="flex justify-end gap-1">
-                  <button
-                    type="button"
+                  <Link
+                    href={`/admin/productos/${p.slug}`}
                     aria-label={`Editar ${p.nombre}`}
                     className="grid h-8 w-8 place-items-center rounded-lg text-grafito transition-colors hover:bg-petroleo-100 hover:text-petroleo-800"
                   >
                     <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label={`Eliminar ${p.nombre}`}
+                  </Link>
+                  <BotonAccion
+                    etiqueta={`Eliminar ${p.nombre}`}
+                    confirmar={`¿Eliminar «${p.nombre}»? Se borrarán también sus presentaciones. Esta acción no se puede deshacer.`}
+                    accion={() => eliminarProducto(p.id)}
                     className="grid h-8 w-8 place-items-center rounded-lg text-grafito transition-colors hover:bg-coral-100 hover:text-coral-500"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                  </BotonAccion>
                 </div>
               </td>
             </tr>
@@ -196,13 +208,9 @@ export function TablaProductos() {
         })}
       </Tabla>
 
-      <div className="flex items-center justify-between gap-3 border-t border-petroleo-700/10 px-5 py-3.5 text-xs text-grafito">
-        <span>
-          Mostrando {lista.length} de {todos.length} productos
-        </span>
-        {inactivos.length > 0 ? (
-          <Etiqueta tono="suaveCoral">{inactivos.length} desactivados</Etiqueta>
-        ) : null}
+      <div className="border-t border-petroleo-700/10 px-5 py-3.5 text-xs text-grafito">
+        Mostrando {lista.length} de {productos.length} productos ·{" "}
+        {productos.filter((p) => !p.activo).length} desactivados
       </div>
     </Panel>
   );

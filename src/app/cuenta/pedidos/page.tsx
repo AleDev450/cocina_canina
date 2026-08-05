@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { pedidosDemo } from "@/data/cuenta";
+import { misPedidos } from "@/server/pedidos";
 import { TarjetaPedido } from "@/components/cuenta/Piezas";
+import { Boton } from "@/components/ui/Boton";
 
 export const metadata: Metadata = { title: "Mis pedidos" };
 
-export default function PaginaPedidos() {
+export default async function PaginaPedidos() {
+  const pedidos = await misPedidos();
+
   return (
     <div>
       <h2 className="font-display text-2xl font-semibold text-petroleo-900">
@@ -15,11 +18,22 @@ export default function PaginaPedidos() {
         un clic.
       </p>
 
-      <div className="mt-6 space-y-5">
-        {pedidosDemo.map((p) => (
-          <TarjetaPedido key={p.numero} pedido={p} />
-        ))}
-      </div>
+      {pedidos.length === 0 ? (
+        <div className="mt-6 rounded-3xl border border-petroleo-700/10 bg-white p-10 text-center">
+          <p className="text-sm text-grafito">
+            Todavía no hiciste ningún pedido.
+          </p>
+          <Boton href="/productos" variante="primario" medida="md" className="mt-5">
+            Ver el catálogo
+          </Boton>
+        </div>
+      ) : (
+        <div className="mt-6 space-y-5">
+          {pedidos.map((p) => (
+            <TarjetaPedido key={p.id} pedido={p} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

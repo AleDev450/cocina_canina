@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { Gift, History, ShoppingBag, Sparkles, UserPlus } from "lucide-react";
 import {
-  historialPuntos,
-  nombreEstadoPuntos,
-  reglaPuntos,
-  siguienteRecompensa,
-} from "@/data/recompensas";
-import { clienteDemo, cuponesDemo } from "@/data/cuenta";
+  misMovimientos,
+  obtenerRecompensas,
+  obtenerRegla,
+} from "@/server/recompensas";
+import { misCupones } from "@/server/clientes";
+import { perfilActual } from "@/server/sesion";
+import { nombreEstadoPuntos } from "@/data/recompensas";
 import { CatalogoRecompensas, HistorialPuntos } from "@/components/recompensas/Piezas";
 import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { Boton } from "@/components/ui/Boton";
 import { CabeceraSeccion, Pastilla } from "@/components/ui/Elementos";
 import { fechaCorta, precio } from "@/lib/formato";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Club Cocina Canina",
@@ -20,34 +24,46 @@ export const metadata: Metadata = {
     "Acumula puntos con cada compra y canjéalos por descuentos, envíos gratis y snacks de regalo.",
 };
 
-const PASOS = [
-  {
-    icono: UserPlus,
-    titulo: "Crea tu cuenta",
-    texto: "El registro es gratuito y te da 20 puntos de bienvenida.",
-  },
-  {
-    icono: ShoppingBag,
-    titulo: "Compra normalmente",
-    texto: `Por cada S/ ${reglaPuntos.montoPorPunto.toFixed(2)} ganas ${reglaPuntos.puntosOtorgados} punto, en la web o por WhatsApp.`,
-  },
-  {
-    icono: Gift,
-    titulo: "Canjea tu premio",
-    texto: "Descuentos, envío gratis, productos o regalos sorpresa.",
-  },
-];
+export default async function PaginaRecompensas() {
+  const [regla, recompensas, perfil] = await Promise.all([
+    obtenerRegla(),
+    obtenerRecompensas(),
+    perfilActual(),
+  ]);
 
-export default function PaginaRecompensas() {
-  const puntos = clienteDemo.puntos;
-  const siguiente = siguienteRecompensa(puntos);
+  const [movimientos, cupones] = perfil
+    ? await Promise.all([misMovimientos(), misCupones()])
+    : [[], []];
+
+  const puntos = perfil?.puntos ?? 0;
+  const siguiente = [...recompensas]
+    .sort((a, b) => a.puntos - b.puntos)
+    .find((r) => r.puntos > puntos);
   const faltan = siguiente ? siguiente.puntos - puntos : 0;
   const progreso = siguiente ? Math.round((puntos / siguiente.puntos) * 100) : 100;
+
+  const PASOS = [
+    {
+      icono: UserPlus,
+      titulo: "Crea tu cuenta",
+      texto: "El registro es gratuito y te da 20 puntos de bienvenida.",
+    },
+    {
+      icono: ShoppingBag,
+      titulo: "Compra normalmente",
+      texto: `Por cada S/ ${regla.montoPorPunto.toFixed(2)} ganas ${regla.puntosOtorgados} punto, en la web o por WhatsApp.`,
+    },
+    {
+      icono: Gift,
+      titulo: "Canjea tu premio",
+      texto: "Descuentos, envío gratis, productos o regalos sorpresa.",
+    },
+  ];
 
   const resumen = (["pendiente", "disponible", "canjeado", "vencido"] as const).map(
     (estado) => ({
       estado,
-      total: historialPuntos
+      total: movimientos
         .filter((m) => m.estado === estado)
         .reduce((t, m) => t + Math.abs(m.puntos), 0),
     }),
@@ -58,12 +74,11 @@ export default function PaginaRecompensas() {
       <CabeceraPagina
         antetitulo="Programa de fidelización"
         titulo="Club Cocina Canina"
-        texto={`Por cada S/ ${reglaPuntos.montoPorPunto.toFixed(2)} de compra ganas ${reglaPuntos.puntosOtorgados} punto. Sin costo de membresía y con campañas de puntos dobles durante el año.`}
+        texto={`Por cada S/ ${regla.montoPorPunto.toFixed(2)} de compra ganas ${regla.puntosOtorgados} punto. Sin costo de membresía y con campañas de puntos dobles durante el año.`}
         migajas={[{ nombre: "Inicio", href: "/" }, { nombre: "Recompensas" }]}
         pose="saltando"
       />
 
-      {/* Estado de la cuenta */}
       <section className="py-14">
         <div className="contenedor">
           <div className="grid gap-5 lg:grid-cols-[1.3fr_1fr]">
@@ -77,52 +92,77 @@ export default function PaginaRecompensas() {
               <div className="relative">
                 <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-naranja-300">
                   <Sparkles className="h-3.5 w-3.5" />
-                  Tu cuenta
+                  {perfil ? "Tu cuenta" : "Únete gratis"}
                 </span>
-                <p className="mt-5 font-display text-2xl">Hola, {clienteDemo.nombres}</p>
-                <p className="mt-1 font-display text-[3.6rem] font-semibold leading-none">
-                  {puntos}
-                  <span className="ml-2 text-lg font-normal text-petroleo-100">
-                    puntos
-                  </span>
-                </p>
 
-                {siguiente ? (
-                  <div className="mt-7 max-w-md">
-                    <div className="flex items-baseline justify-between gap-3 text-sm">
-                      <span className="text-petroleo-100">
-                        Siguiente recompensa:{" "}
-                        <strong className="font-semibold text-white">
-                          {siguiente.nombre}
-                        </strong>
+                {perfil ? (
+                  <>
+                    <p className="mt-5 font-display text-2xl">Hola, {perfil.nombres}</p>
+                    <p className="mt-1 font-display text-[3.6rem] font-semibold leading-none">
+                      {puntos}
+                      <span className="ml-2 text-lg font-normal text-petroleo-100">
+                        puntos
                       </span>
-                      <span className="shrink-0 font-semibold text-naranja-300">
-                        {siguiente.puntos} pts
-                      </span>
-                    </div>
-                    <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white/15">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-naranja-400 to-naranja-500"
-                        style={{ width: `${progreso}%` }}
-                      />
-                    </div>
-                    <p className="mt-2.5 text-sm text-petroleo-100">
-                      Te faltan{" "}
-                      <strong className="font-semibold text-white">{faltan} puntos</strong>
-                      , cerca de {precio(faltan * reglaPuntos.montoPorPunto)} en compras.
                     </p>
-                  </div>
-                ) : null}
 
-                <div className="mt-8 flex flex-wrap gap-2.5">
-                  <Boton href="#catalogo" variante="primario" medida="md">
-                    Canjear puntos
-                  </Boton>
-                  <Boton href="#historial" variante="contornoClaro" medida="md">
-                    <History className="h-4 w-4" />
-                    Ver historial
-                  </Boton>
-                </div>
+                    {siguiente ? (
+                      <div className="mt-7 max-w-md">
+                        <div className="flex items-baseline justify-between gap-3 text-sm">
+                          <span className="text-petroleo-100">
+                            Siguiente recompensa:{" "}
+                            <strong className="font-semibold text-white">
+                              {siguiente.nombre}
+                            </strong>
+                          </span>
+                          <span className="shrink-0 font-semibold text-naranja-300">
+                            {siguiente.puntos} pts
+                          </span>
+                        </div>
+                        <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white/15">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-naranja-400 to-naranja-500"
+                            style={{ width: `${progreso}%` }}
+                          />
+                        </div>
+                        <p className="mt-2.5 text-sm text-petroleo-100">
+                          Te faltan{" "}
+                          <strong className="font-semibold text-white">
+                            {faltan} puntos
+                          </strong>
+                          , cerca de {precio(faltan * regla.montoPorPunto)} en compras.
+                        </p>
+                      </div>
+                    ) : null}
+
+                    <div className="mt-8 flex flex-wrap gap-2.5">
+                      <Boton href="#catalogo" variante="primario" medida="md">
+                        Canjear puntos
+                      </Boton>
+                      <Boton href="#historial" variante="contornoClaro" medida="md">
+                        <History className="h-4 w-4" />
+                        Ver historial
+                      </Boton>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-5 max-w-md font-display text-3xl leading-tight">
+                      Crea tu cuenta y empieza con 20 puntos de regalo
+                    </p>
+                    <p className="mt-3 max-w-md text-petroleo-100">
+                      El registro es gratuito. Acumulas con cada compra y canjeas por
+                      descuentos, envíos gratis o snacks.
+                    </p>
+                    <div className="mt-8 flex flex-wrap gap-2.5">
+                      <Boton href="/registro" variante="primario" medida="md">
+                        Crear mi cuenta
+                      </Boton>
+                      <Boton href="/ingresar" variante="contornoClaro" medida="md">
+                        Ya tengo cuenta
+                      </Boton>
+                    </div>
+                  </>
+                )}
               </div>
 
               <Image
@@ -134,32 +174,38 @@ export default function PaginaRecompensas() {
               />
             </div>
 
-            {/* Desglose */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 lg:content-start">
-              <div className="grid grid-cols-2 gap-3">
-                {resumen.map((r) => (
-                  <div
-                    key={r.estado}
-                    className="rounded-2xl border border-petroleo-700/10 bg-white p-4"
-                  >
-                    <p className="font-display text-2xl font-semibold text-petroleo-900">
-                      {r.total}
-                    </p>
-                    <p className="text-xs text-grafito">
-                      {nombreEstadoPuntos[r.estado]}
-                    </p>
-                  </div>
-                ))}
-              </div>
+              {perfil ? (
+                <div className="grid grid-cols-2 gap-3">
+                  {resumen.map((r) => (
+                    <div
+                      key={r.estado}
+                      className="rounded-2xl border border-petroleo-700/10 bg-white p-4"
+                    >
+                      <p className="font-display text-2xl font-semibold text-petroleo-900">
+                        {r.total}
+                      </p>
+                      <p className="text-xs text-grafito">
+                        {nombreEstadoPuntos[r.estado]}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
 
               <div className="rounded-2xl border border-petroleo-700/10 bg-white p-5 sm:col-span-2 lg:col-span-1">
                 <h2 className="font-display text-base font-semibold text-petroleo-900">
                   Cupones disponibles
                 </h2>
-                <ul className="mt-3 space-y-2.5">
-                  {cuponesDemo
-                    .filter((c) => !c.usado)
-                    .map((c) => (
+                {cupones.length === 0 ? (
+                  <p className="mt-3 text-sm text-grafito">
+                    {perfil
+                      ? "Todavía no tienes cupones activos."
+                      : "Inicia sesión para ver tus cupones."}
+                  </p>
+                ) : (
+                  <ul className="mt-3 space-y-2.5">
+                    {cupones.map((c) => (
                       <li
                         key={c.codigo}
                         className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-petroleo-700/25 px-3.5 py-2.5"
@@ -172,19 +218,21 @@ export default function PaginaRecompensas() {
                             {c.descripcion}
                           </p>
                         </div>
-                        <Pastilla tono="suaveAmbar">
-                          Vence {fechaCorta(c.vence)}
-                        </Pastilla>
+                        {c.vence ? (
+                          <Pastilla tono="suaveAmbar">
+                            Vence {fechaCorta(c.vence)}
+                          </Pastilla>
+                        ) : null}
                       </li>
                     ))}
-                </ul>
+                  </ul>
+                )}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Cómo funciona */}
       <section className="bg-white py-16 md:py-20">
         <div className="contenedor">
           <CabeceraSeccion
@@ -213,14 +261,13 @@ export default function PaginaRecompensas() {
           </ol>
 
           <p className="mt-8 text-center text-xs text-grafito">
-            Vigencia del programa: {fechaCorta(reglaPuntos.vigenciaDesde)} al{" "}
-            {fechaCorta(reglaPuntos.vigenciaHasta)}. Los puntos caducan a los 12 meses de
+            Programa vigente del {fechaCorta(regla.vigenciaDesde)} al{" "}
+            {fechaCorta(regla.vigenciaHasta)}. Los puntos caducan a los 12 meses de
             acreditados.
           </p>
         </div>
       </section>
 
-      {/* Catálogo */}
       <section id="catalogo" className="py-16 md:py-20">
         <div className="contenedor">
           <CabeceraSeccion
@@ -229,24 +276,43 @@ export default function PaginaRecompensas() {
             texto="Las recompensas y sus equivalencias se administran desde el CMS: se pueden activar, cambiar de valor o vincular a campañas puntuales."
           />
           <div className="mt-12">
-            <CatalogoRecompensas puntos={puntos} />
+            <CatalogoRecompensas
+              recompensas={recompensas}
+              puntos={puntos}
+              autenticado={Boolean(perfil)}
+            />
           </div>
         </div>
       </section>
 
-      {/* Historial */}
-      <section id="historial" className="bg-white py-16 md:py-20">
-        <div className="contenedor max-w-3xl">
-          <CabeceraSeccion
-            antetitulo="Movimientos"
-            titulo="Historial de puntos"
-            texto="Cada compra, canje y vencimiento queda registrado con su estado."
-          />
-          <div className="mt-10">
-            <HistorialPuntos />
+      {perfil ? (
+        <section id="historial" className="bg-white py-16 md:py-20">
+          <div className="contenedor max-w-3xl">
+            <CabeceraSeccion
+              antetitulo="Movimientos"
+              titulo="Historial de puntos"
+              texto="Cada compra, canje y vencimiento queda registrado con su estado."
+            />
+            <div className="mt-10">
+              <HistorialPuntos movimientos={movimientos} />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className="bg-white py-16">
+          <div className="contenedor max-w-xl text-center">
+            <p className="text-grafito">
+              <Link
+                href="/ingresar"
+                className="font-semibold text-naranja-600 hover:underline"
+              >
+                Inicia sesión
+              </Link>{" "}
+              para ver tu historial de puntos y canjear recompensas.
+            </p>
+          </div>
+        </section>
+      )}
     </>
   );
 }

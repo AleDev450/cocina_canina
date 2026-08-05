@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { obtenerProductos } from "@/server/catalogo";
 import { ListaFavoritos } from "@/components/cuenta/ListaFavoritos";
 
 export const metadata: Metadata = { title: "Favoritos" };
 
-export default function PaginaFavoritos() {
+export default async function PaginaFavoritos() {
+  const productos = await obtenerProductos();
+
   return (
     <div>
       <h2 className="font-display text-2xl font-semibold text-petroleo-900">
@@ -13,7 +16,7 @@ export default function PaginaFavoritos() {
         Los snacks que guardaste con el corazón desde el catálogo.
       </p>
       <div className="mt-6">
-        <ListaFavoritos />
+        <ListaFavoritos productos={productos} />
       </div>
     </div>
   );

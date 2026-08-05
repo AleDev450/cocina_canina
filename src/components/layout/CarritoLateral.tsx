@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Minus, Plus, Sparkles, Tag, Trash2, X } from "lucide-react";
 import { useTienda } from "@/context/Tienda";
 import { cx, precio } from "@/lib/formato";
-import { reglaPuntos } from "@/data/recompensas";
+
 import { enlacePedido } from "@/lib/whatsapp";
 import { Boton, clasesBoton } from "@/components/ui/Boton";
 import { EstadoVacio } from "@/components/ui/Elementos";
@@ -29,11 +29,14 @@ export function CarritoLateral() {
 
   const [codigo, setCodigo] = useState("");
   const [aviso, setAviso] = useState<{ ok: boolean; mensaje: string } | null>(null);
+  const [validando, setValidando] = useState(false);
 
-  const enviarCupon = () => {
-    const resultado = aplicarCupon(codigo);
+  const enviarCupon = async () => {
+    setValidando(true);
+    const resultado = await aplicarCupon(codigo);
     setAviso(resultado);
     if (resultado.ok) setCodigo("");
+    setValidando(false);
   };
 
   return (
@@ -218,9 +221,10 @@ export function CarritoLateral() {
                       <button
                         type="button"
                         onClick={enviarCupon}
+                        disabled={validando}
                         className={clasesBoton("petroleo", "sm")}
                       >
-                        Aplicar
+                        {validando ? "Validando…" : "Aplicar"}
                       </button>
                     </div>
                     {aviso ? (
@@ -245,7 +249,7 @@ export function CarritoLateral() {
                 <p className="text-xs text-naranja-800">
                   Ganarás{" "}
                   <strong className="font-bold">{puntosDelCarrito} puntos</strong> con
-                  esta compra · 1 punto por cada S/ {reglaPuntos.montoPorPunto}
+                  esta compra · se acreditan al entregarse
                 </p>
               </div>
 

@@ -12,7 +12,7 @@ import { cx, precio } from "@/lib/formato";
  * Móvil: botón flotante de WhatsApp y barra inferior fija con el pedido.
  * En escritorio solo queda el botón de WhatsApp.
  */
-export function AccionesFlotantes() {
+export function AccionesFlotantes({ whatsapp }: { whatsapp?: string }) {
   const ruta = usePathname();
   const { cantidadTotal, subtotal, abrirCarrito, hidratado } = useTienda();
   const [visible, setVisible] = useState(false);
@@ -34,7 +34,7 @@ export function AccionesFlotantes() {
     <>
       {/* WhatsApp */}
       <a
-        href={consultaGeneral()}
+        href={consultaGeneral(whatsapp)}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Escríbenos por WhatsApp"

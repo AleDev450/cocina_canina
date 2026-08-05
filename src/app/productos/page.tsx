@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Catalogo } from "@/components/producto/Catalogo";
 import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
-import { obtenerCategoria } from "@/data/categorias";
+import { obtenerCategorias, obtenerProductos } from "@/server/catalogo";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Productos",
@@ -15,7 +17,13 @@ export default async function PaginaProductos({
   searchParams: Promise<{ categoria?: string }>;
 }) {
   const { categoria } = await searchParams;
-  const info = categoria ? obtenerCategoria(categoria) : undefined;
+
+  const [productos, categorias] = await Promise.all([
+    obtenerProductos(),
+    obtenerCategorias(),
+  ]);
+
+  const info = categoria ? categorias.find((c) => c.slug === categoria) : undefined;
 
   return (
     <>
@@ -36,7 +44,11 @@ export default async function PaginaProductos({
         pose="mirada"
       />
 
-      <Catalogo categoriaInicial={info?.slug} />
+      <Catalogo
+        productos={productos}
+        categorias={categorias}
+        categoriaInicial={info?.slug}
+      />
     </>
   );
 }

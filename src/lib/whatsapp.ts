@@ -2,24 +2,33 @@ import { sitio } from "@/data/sitio";
 import type { ItemCarrito } from "@/lib/tipos";
 import { precio } from "@/lib/formato";
 
-const BASE = `https://wa.me/${sitio.whatsapp}`;
+/**
+ * Enlaces de WhatsApp. El número por defecto viene de `src/data/sitio.ts`,
+ * pero cualquier función acepta el que esté configurado en el CMS.
+ */
 
-export function enlaceWhatsapp(mensaje: string): string {
-  return `${BASE}?text=${encodeURIComponent(mensaje)}`;
+export function enlaceWhatsapp(mensaje: string, numero = sitio.whatsapp): string {
+  return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
 }
 
 /** Consulta general desde el header o el botón flotante. */
-export function consultaGeneral(): string {
+export function consultaGeneral(numero = sitio.whatsapp): string {
   return enlaceWhatsapp(
     `¡Hola ${sitio.nombre}! Vengo de la web y quisiera hacer una consulta sobre sus productos.`,
+    numero,
   );
 }
 
 /** Consulta sobre un producto concreto. */
-export function consultaProducto(nombre: string, presentacion?: string): string {
+export function consultaProducto(
+  nombre: string,
+  presentacion?: string,
+  numero = sitio.whatsapp,
+): string {
   const detalle = presentacion ? ` (${presentacion})` : "";
   return enlaceWhatsapp(
     `¡Hola ${sitio.nombre}! Me interesa *${nombre}*${detalle}. ¿Tienen stock disponible?`,
+    numero,
   );
 }
 
@@ -29,6 +38,7 @@ interface DatosPedido {
   total: number;
   direccion?: string;
   entrega?: string;
+  numero?: string;
 }
 
 /**
@@ -66,16 +76,19 @@ export function mensajePedido({
 }
 
 export function enlacePedido(datos: DatosPedido): string {
-  return enlaceWhatsapp(mensajePedido(datos));
+  return enlaceWhatsapp(mensajePedido(datos), datos.numero ?? sitio.whatsapp);
 }
 
 /** Solicitud de cotización por mayor. */
-export function cotizacionMayor(campos: {
-  negocio: string;
-  productos: string;
-  cantidad: string;
-  fecha: string;
-}): string {
+export function cotizacionMayor(
+  campos: {
+    negocio: string;
+    productos: string;
+    cantidad: string;
+    fecha: string;
+  },
+  numero = sitio.whatsapp,
+): string {
   return enlaceWhatsapp(
     [
       `¡Hola ${sitio.nombre}! Quisiera una cotización por mayor.`,
@@ -87,5 +100,6 @@ export function cotizacionMayor(campos: {
       "",
       "Entiendo que los pedidos por mayor se solicitan con al menos 3 días de anticipación.",
     ].join("\n"),
+    numero,
   );
 }

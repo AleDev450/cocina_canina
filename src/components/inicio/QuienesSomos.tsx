@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { quienesSomos } from "@/data/sitio";
+import { quienesSomos as porDefecto } from "@/data/sitio";
 import { Boton } from "@/components/ui/Boton";
 import { Antetitulo } from "@/components/ui/Elementos";
 import { iconosPorNombre, type NombreIcono } from "@/components/ui/Iconos";
@@ -11,7 +11,11 @@ const ESTANTE = [
   "/empaques/pejerrey-bolsa.png",
 ];
 
-export function QuienesSomos() {
+export function QuienesSomos({
+  quienesSomos = porDefecto,
+}: {
+  quienesSomos?: typeof porDefecto;
+}) {
   return (
     <section id="nosotros" className="bg-white py-16 md:py-24">
       <div className="contenedor grid items-center gap-14 lg:grid-cols-2 lg:gap-16">

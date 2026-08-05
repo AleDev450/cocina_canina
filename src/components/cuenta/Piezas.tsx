@@ -1,9 +1,10 @@
 "use client";
 
 import { Check, RotateCcw, Truck } from "lucide-react";
-import type { EstadoPedido, Pedido } from "@/lib/tipos";
+import type { EstadoPedido } from "@/lib/tipos";
+import type { PedidoAdmin } from "@/server/pedidos";
 import { flujoEstados, nombreEstadoPedido } from "@/data/cuenta";
-import { obtenerProducto } from "@/data/productos";
+
 import { useTienda } from "@/context/Tienda";
 import { cx, fechaLarga, precio } from "@/lib/formato";
 import { Boton } from "@/components/ui/Boton";
@@ -76,27 +77,20 @@ export function Seguimiento({ estado }: { estado: EstadoPedido }) {
   );
 }
 
-export function TarjetaPedido({ pedido }: { pedido: Pedido }) {
+export function TarjetaPedido({ pedido }: { pedido: PedidoAdmin }) {
   const { agregar, abrirCarrito } = useTienda();
 
   const repetir = () => {
     pedido.lineas.forEach((l) => {
-      const producto = obtenerProducto(
-        l.nombre
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/\p{Diacritic}/gu, "")
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-|-$/g, ""),
-      );
+      const linea = l as typeof l & { slug?: string; imagen?: string };
       agregar({
-        id: `${producto?.slug ?? l.nombre}:${l.presentacion}`,
-        slug: producto?.slug ?? "",
+        id: `${linea.slug || l.nombre}:${l.presentacion}`,
+        slug: linea.slug ?? "",
         nombre: l.nombre,
         presentacion: l.presentacion,
         precio: l.precio,
         cantidad: l.cantidad,
-        imagen: producto?.imagen ?? "/productos/barf.png",
+        imagen: linea.imagen ?? "/productos/barf.png",
         tipo: l.nombre.startsWith("BARF") ? "barf" : "snack",
       });
     });

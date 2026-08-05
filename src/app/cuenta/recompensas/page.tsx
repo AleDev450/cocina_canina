@@ -1,26 +1,36 @@
 import type { Metadata } from "next";
-import { clienteDemo } from "@/data/cuenta";
 import {
-  historialPuntos,
-  nombreEstadoPuntos,
-  reglaPuntos,
-  siguienteRecompensa,
-} from "@/data/recompensas";
+  misMovimientos,
+  obtenerRecompensas,
+  obtenerRegla,
+} from "@/server/recompensas";
+import { exigirCliente } from "@/server/sesion";
+import { nombreEstadoPuntos } from "@/data/recompensas";
 import { CatalogoRecompensas, HistorialPuntos } from "@/components/recompensas/Piezas";
 import { fechaCorta, precio } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Mis puntos" };
 
-export default function PaginaRecompensasCuenta() {
-  const puntos = clienteDemo.puntos;
-  const siguiente = siguienteRecompensa(puntos);
+export default async function PaginaRecompensasCuenta() {
+  const cliente = await exigirCliente();
+
+  const [regla, recompensas, movimientos] = await Promise.all([
+    obtenerRegla(),
+    obtenerRecompensas(),
+    misMovimientos(),
+  ]);
+
+  const puntos = cliente.puntos;
+  const siguiente = [...recompensas]
+    .sort((a, b) => a.puntos - b.puntos)
+    .find((r) => r.puntos > puntos);
   const faltan = siguiente ? siguiente.puntos - puntos : 0;
   const progreso = siguiente ? Math.round((puntos / siguiente.puntos) * 100) : 100;
 
   const totales = (["pendiente", "disponible", "canjeado", "vencido", "cancelado"] as const).map(
     (estado) => ({
       estado,
-      total: historialPuntos
+      total: movimientos
         .filter((m) => m.estado === estado)
         .reduce((t, m) => t + Math.abs(m.puntos), 0),
     }),
@@ -33,13 +43,12 @@ export default function PaginaRecompensasCuenta() {
           Mis puntos
         </h2>
         <p className="mt-1.5 text-sm text-grafito">
-          Ganas {reglaPuntos.puntosOtorgados} punto por cada S/{" "}
-          {reglaPuntos.montoPorPunto.toFixed(2)} de compra. Los puntos vencen a los 12
-          meses de acreditados.
+          Ganas {regla.puntosOtorgados} punto por cada S/{" "}
+          {regla.montoPorPunto.toFixed(2)} de compra. Los puntos vencen a los 12 meses de
+          acreditados.
         </p>
       </div>
 
-      {/* Progreso */}
       <section className="rounded-3xl border border-petroleo-700/10 bg-white p-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -56,7 +65,7 @@ export default function PaginaRecompensasCuenta() {
               <strong className="font-semibold text-petroleo-900">
                 {siguiente.nombre}
               </strong>{" "}
-              · faltan {faltan} pts ({precio(faltan * reglaPuntos.montoPorPunto)})
+              · faltan {faltan} pts ({precio(faltan * regla.montoPorPunto)})
             </p>
           ) : null}
         </div>
@@ -82,25 +91,23 @@ export default function PaginaRecompensasCuenta() {
         </dl>
 
         <p className="mt-5 text-xs text-grafito">
-          Programa vigente del {fechaCorta(reglaPuntos.vigenciaDesde)} al{" "}
-          {fechaCorta(reglaPuntos.vigenciaHasta)}.
+          Programa vigente del {fechaCorta(regla.vigenciaDesde)} al{" "}
+          {fechaCorta(regla.vigenciaHasta)}.
         </p>
       </section>
 
-      {/* Canje */}
       <section>
         <h3 className="mb-4 font-display text-xl font-semibold text-petroleo-900">
           Canjear puntos
         </h3>
-        <CatalogoRecompensas puntos={puntos} />
+        <CatalogoRecompensas recompensas={recompensas} puntos={puntos} autenticado />
       </section>
 
-      {/* Historial */}
       <section>
         <h3 className="mb-4 font-display text-xl font-semibold text-petroleo-900">
           Historial de movimientos
         </h3>
-        <HistorialPuntos />
+        <HistorialPuntos movimientos={movimientos} />
       </section>
     </div>
   );

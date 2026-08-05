@@ -9,9 +9,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Cupon, ItemCarrito } from "@/lib/tipos";
-import { cuponesDemo, clienteDemo } from "@/data/cuenta";
-import { puntosPorMonto } from "@/data/recompensas";
+import type { ItemCarrito } from "@/lib/tipos";
+import { validarCupon } from "@/server/acciones/recompensas";
+import { reglaPuntos as REGLA_POR_DEFECTO } from "@/data/recompensas";
 
 /**
  * Estado de tienda del prototipo: carrito, favoritos, cupón y sesión de
@@ -21,6 +21,13 @@ import { puntosPorMonto } from "@/data/recompensas";
  * Cuando entre Supabase: el carrito puede quedarse en cliente, mientras que
  * favoritos y sesión pasan a `favoritos` y `auth.users`.
  */
+
+export interface CuponAplicado {
+  codigo: string;
+  descripcion: string;
+  tipo: string;
+  valor: number;
+}
 
 interface Sesion {
   activa: boolean;
@@ -44,8 +51,8 @@ interface Tienda {
   alternarFavorito: (slug: string) => void;
   esFavorito: (slug: string) => boolean;
 
-  cupon: Cupon | null;
-  aplicarCupon: (codigo: string) => { ok: boolean; mensaje: string };
+  cupon: CuponAplicado | null;
+  aplicarCupon: (codigo: string) => Promise<{ ok: boolean; mensaje: string }>;
   quitarCupon: () => void;
   descuento: number;
 
@@ -71,17 +78,23 @@ interface Guardado {
   carrito: ItemCarrito[];
   favoritos: string[];
   sesion: Sesion;
-  cupon: string | null;
+  cupon: CuponAplicado | null;
 }
 
 const SESION_VACIA: Sesion = { activa: false, nombre: "", correo: "" };
 
-export function ProveedorTienda({ children }: { children: ReactNode }) {
+export function ProveedorTienda({
+  children,
+  regla = REGLA_POR_DEFECTO,
+}: {
+  children: ReactNode;
+  regla?: { montoPorPunto: number; puntosOtorgados: number; multiplicador: number; compraMinima: number };
+}) {
   const [hidratado, setHidratado] = useState(false);
   const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
   const [favoritos, setFavoritos] = useState<string[]>([]);
   const [sesion, setSesion] = useState<Sesion>(SESION_VACIA);
-  const [cupon, setCupon] = useState<Cupon | null>(null);
+  const [cupon, setCupon] = useState<CuponAplicado | null>(null);
   const [carritoAbierto, setCarritoAbierto] = useState(false);
   const [buscadorAbierto, setBuscadorAbierto] = useState(false);
   const [ultimoAgregado, setUltimoAgregado] = useState<string | null>(null);
@@ -95,10 +108,7 @@ export function ProveedorTienda({ children }: { children: ReactNode }) {
         if (Array.isArray(datos.carrito)) setCarrito(datos.carrito);
         if (Array.isArray(datos.favoritos)) setFavoritos(datos.favoritos);
         if (datos.sesion) setSesion(datos.sesion);
-        if (datos.cupon) {
-          const encontrado = cuponesDemo.find((c) => c.codigo === datos.cupon);
-          if (encontrado) setCupon(encontrado);
-        }
+        if (datos.cupon) setCupon(datos.cupon);
       }
     } catch {
       // localStorage bloqueado: el prototipo sigue funcionando en memoria.
@@ -114,7 +124,7 @@ export function ProveedorTienda({ children }: { children: ReactNode }) {
         carrito,
         favoritos,
         sesion,
-        cupon: cupon?.codigo ?? null,
+        cupon,
       };
       window.localStorage.setItem(CLAVE, JSON.stringify(datos));
     } catch {
@@ -188,16 +198,12 @@ export function ProveedorTienda({ children }: { children: ReactNode }) {
   }, [cupon, subtotal]);
 
   const aplicarCupon = useCallback(
-    (codigo: string) => {
-      const limpio = codigo.trim().toUpperCase();
-      if (!limpio) return { ok: false, mensaje: "Escribe un código." };
-      const encontrado = cuponesDemo.find((c) => c.codigo === limpio);
-      if (!encontrado) return { ok: false, mensaje: "Ese cupón no existe." };
-      if (encontrado.usado) return { ok: false, mensaje: "Ese cupón ya fue usado." };
-      setCupon(encontrado);
-      return { ok: true, mensaje: `Cupón ${encontrado.codigo} aplicado.` };
+    async (codigo: string) => {
+      const resultado = await validarCupon(codigo, subtotal);
+      if (resultado.ok && resultado.cupon) setCupon(resultado.cupon);
+      return { ok: resultado.ok, mensaje: resultado.mensaje };
     },
-    [],
+    [subtotal],
   );
 
   const valor = useMemo<Tienda>(
@@ -210,7 +216,12 @@ export function ProveedorTienda({ children }: { children: ReactNode }) {
       vaciar,
       cantidadTotal,
       subtotal,
-      puntosDelCarrito: puntosPorMonto(subtotal),
+      puntosDelCarrito:
+        subtotal < regla.compraMinima
+          ? 0
+          : Math.floor(subtotal / regla.montoPorPunto) *
+            regla.puntosOtorgados *
+            regla.multiplicador,
       favoritos,
       alternarFavorito,
       esFavorito: (slug: string) => favoritos.includes(slug),
@@ -227,8 +238,8 @@ export function ProveedorTienda({ children }: { children: ReactNode }) {
       iniciarSesion: (nombre, correo) =>
         setSesion({
           activa: true,
-          nombre: nombre?.trim() || clienteDemo.nombres,
-          correo: correo?.trim() || clienteDemo.correo,
+          nombre: nombre?.trim() ?? "",
+          correo: correo?.trim() ?? "",
         }),
       cerrarSesion: () => setSesion(SESION_VACIA),
       ultimoAgregado,
@@ -251,6 +262,7 @@ export function ProveedorTienda({ children }: { children: ReactNode }) {
       buscadorAbierto,
       sesion,
       ultimoAgregado,
+      regla,
     ],
   );
 

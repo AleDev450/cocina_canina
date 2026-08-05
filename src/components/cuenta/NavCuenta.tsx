@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Dog,
   Gift,
@@ -13,8 +13,9 @@ import {
   Ticket,
   UserCog,
 } from "lucide-react";
+import { salir } from "@/server/acciones/auth";
 import { useTienda } from "@/context/Tienda";
-import { clienteDemo } from "@/data/cuenta";
+
 import { cx } from "@/lib/formato";
 import { AvatarMascota } from "@/components/ui/Elementos";
 
@@ -29,25 +30,24 @@ const ENLACES = [
   { href: "/cuenta/datos", nombre: "Mis datos", icono: UserCog },
 ];
 
-export function NavCuenta() {
+export function NavCuenta({ nombre, puntos }: { nombre: string; puntos: number }) {
   const ruta = usePathname();
-  const router = useRouter();
-  const { cerrarSesion, sesion, favoritos, hidratado } = useTienda();
+  const { favoritos, hidratado } = useTienda();
 
   return (
     <nav aria-label="Menú de mi cuenta">
       {/* Identidad */}
       <div className="mb-4 flex items-center gap-3 rounded-3xl border border-petroleo-700/10 bg-white p-4">
         <AvatarMascota
-          nombre={hidratado && sesion.activa ? sesion.nombre : clienteDemo.nombres}
+          nombre={nombre}
           className="h-12 w-12"
         />
         <div className="min-w-0">
           <p className="truncate font-display text-base font-semibold text-petroleo-900">
-            {hidratado && sesion.activa ? sesion.nombre : clienteDemo.nombres}
+            {nombre}
           </p>
           <p className="truncate text-xs text-grafito">
-            {clienteDemo.puntos} puntos acumulados
+            {puntos} puntos acumulados
           </p>
         </div>
       </div>
@@ -57,7 +57,9 @@ export function NavCuenta() {
           const activo =
             e.href === "/cuenta" ? ruta === "/cuenta" : ruta.startsWith(e.href);
           const contador =
-            e.href === "/cuenta/favoritos" && hidratado ? favoritos.length : null;
+            e.href === "/cuenta/favoritos" && hidratado && favoritos.length > 0
+              ? favoritos.length
+              : null;
 
           return (
             <li key={e.href} className="shrink-0 lg:shrink">
@@ -88,17 +90,15 @@ export function NavCuenta() {
         })}
 
         <li className="shrink-0 lg:mt-2 lg:shrink lg:border-t lg:border-petroleo-700/10 lg:pt-2">
+          <form action={salir}>
           <button
-            type="button"
-            onClick={() => {
-              cerrarSesion();
-              router.push("/");
-            }}
+            type="submit"
             className="flex w-full items-center gap-2.5 rounded-2xl px-3.5 py-2.5 text-sm font-semibold text-grafito transition-colors hover:bg-coral-100 hover:text-coral-500"
           >
             <LogOut className="h-4 w-4 shrink-0" />
             <span className="whitespace-nowrap">Cerrar sesión</span>
           </button>
+          </form>
         </li>
       </ul>
     </nav>

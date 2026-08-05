@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { CalendarClock, Package, Percent } from "lucide-react";
-import { lotesMayor, ANTICIPACION_MAYOR } from "@/data/mayoreo";
+import { ANTICIPACION_MAYOR } from "@/data/mayoreo";
+import { obtenerLotesMayor } from "@/server/catalogo";
+import { obtenerConfiguracion } from "@/server/contenido";
 import { FormularioCotizacion } from "@/components/mayoreo/FormularioCotizacion";
 import { CabeceraPagina } from "@/components/layout/CabeceraPagina";
 import { CabeceraSeccion, Pastilla } from "@/components/ui/Elementos";
@@ -13,7 +15,14 @@ export const metadata: Metadata = {
     "Precios especiales para tiendas, veterinarias y distribuidores. Presentaciones por kilogramo, docena o ciento con cotización a medida.",
 };
 
-export default function PaginaPorMayor() {
+export const dynamic = "force-dynamic";
+
+export default async function PaginaPorMayor() {
+  const [lotesMayor, config] = await Promise.all([
+    obtenerLotesMayor(),
+    obtenerConfiguracion(),
+  ]);
+
   return (
     <>
       <CabeceraPagina
@@ -159,7 +168,7 @@ export default function PaginaPorMayor() {
       {/* Formulario */}
       <section className="py-16 md:py-20">
         <div className="contenedor max-w-4xl">
-          <FormularioCotizacion />
+          <FormularioCotizacion whatsapp={config.contacto.whatsapp} />
         </div>
       </section>
     </>

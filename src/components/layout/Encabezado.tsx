@@ -13,16 +13,26 @@ import {
   User,
   X,
 } from "lucide-react";
-import { navegacion, sitio } from "@/data/sitio";
+import { navegacion, sitio as sitioPorDefecto } from "@/data/sitio";
 import { useTienda } from "@/context/Tienda";
 import { cx } from "@/lib/formato";
 import { Logo } from "@/components/ui/Elementos";
 import { Huella } from "@/components/ui/Iconos";
 import { clasesBoton } from "@/components/ui/Boton";
 
-export function Encabezado() {
+type Contacto = typeof sitioPorDefecto;
+
+export function Encabezado({
+  contacto = sitioPorDefecto,
+  sesionActiva = false,
+}: {
+  contacto?: Contacto;
+  sesionActiva?: boolean;
+}) {
   const ruta = usePathname();
-  const { cantidadTotal, abrirCarrito, setBuscadorAbierto, sesion, hidratado } = useTienda();
+  const { cantidadTotal, abrirCarrito, setBuscadorAbierto, hidratado } = useTienda();
+  const sitio = contacto;
+  const sesion = { activa: sesionActiva };
   const [desplazado, setDesplazado] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
 
