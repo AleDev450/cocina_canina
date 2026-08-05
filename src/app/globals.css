@@ -1,0 +1,217 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   La Cocina Canina — sistema de diseño
+   Colores tomados del logotipo oficial: petróleo #005159 y naranja #FF5A00.
+   ========================================================================== */
+
+@theme {
+  /* Verde petróleo — color dominante de la marca */
+  --color-petroleo-50: #f0f7f7;
+  --color-petroleo-100: #daedee;
+  --color-petroleo-200: #b6dbdd;
+  --color-petroleo-300: #85c2c6;
+  --color-petroleo-400: #4ba2a9;
+  --color-petroleo-500: #22838b;
+  --color-petroleo-600: #0d6a72;
+  --color-petroleo-700: #005159;
+  --color-petroleo-800: #05434a;
+  --color-petroleo-900: #08363b;
+  --color-petroleo-950: #022226;
+
+  /* Naranja — reservado para acciones y acentos */
+  --color-naranja-50: #fff4ec;
+  --color-naranja-100: #ffe4d2;
+  --color-naranja-200: #ffc5a4;
+  --color-naranja-300: #ff9d69;
+  --color-naranja-400: #ff7b36;
+  --color-naranja-500: #ff5a00;
+  --color-naranja-600: #e04e00;
+  --color-naranja-700: #b83e00;
+  --color-naranja-800: #8c3000;
+  --color-naranja-900: #6b2500;
+
+  /* Cremas de fondo */
+  --color-crema-50: #fdfaf5;
+  --color-crema-100: #faf4ea;
+  --color-crema-200: #f3e9d9;
+  --color-crema-300: #e9dbc6;
+
+  /* Texto */
+  --color-tinta: #17302f;
+  --color-grafito: #5a6a69;
+
+  /* Apoyo (usados con moderación: estados, gráficos del panel) */
+  --color-hoja-100: #e4f2e2;
+  --color-hoja-500: #4f9a4a;
+  --color-hoja-600: #3f7f3b;
+  --color-coral-100: #ffe6e0;
+  --color-coral-500: #e8735a;
+  --color-ambar-100: #fdf0d5;
+  --color-ambar-500: #d99a2b;
+
+  --font-display: var(--fuente-display), ui-serif, Georgia, serif;
+  --font-sans: var(--fuente-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xl2: 1.75rem;
+  --radius-blob: 2.5rem;
+
+  --shadow-suave: 0 2px 4px -2px rgb(8 54 59 / 0.06), 0 12px 28px -12px rgb(8 54 59 / 0.14);
+  --shadow-tarjeta: 0 1px 2px rgb(8 54 59 / 0.04), 0 18px 40px -22px rgb(8 54 59 / 0.28);
+  --shadow-elevada: 0 2px 6px rgb(8 54 59 / 0.05), 0 32px 60px -28px rgb(8 54 59 / 0.35);
+
+  --animate-aparecer: aparecer 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-flotar: flotar 6s ease-in-out infinite;
+  --animate-girar-lento: girar-lento 26s linear infinite;
+  --animate-latir: latir 2.4s ease-in-out infinite;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes flotar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes girar-lento {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes latir {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Patrones de marca: huellas y huesos, siempre muy sutiles.
+   -------------------------------------------------------------------------- */
+
+@utility patron-huellas {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='%23005159' fill-opacity='0.05'%3E%3Cg transform='translate(46 54) rotate(-14)'%3E%3Cellipse cx='-16' cy='-10' rx='6' ry='8.5'/%3E%3Cellipse cx='-2' cy='-17' rx='6' ry='9'/%3E%3Cellipse cx='12' cy='-12' rx='6' ry='8.5'/%3E%3Cellipse cx='23' cy='1' rx='5.5' ry='7.5'/%3E%3Cpath d='M-6 4c-8 4-11 12-7 18 4 7 15 9 24 6 8-3 13-10 11-17-2-8-11-12-19-10-3 .5-6 1.5-9 3z'/%3E%3C/g%3E%3Cg transform='translate(186 176) rotate(22)'%3E%3Cellipse cx='-16' cy='-10' rx='6' ry='8.5'/%3E%3Cellipse cx='-2' cy='-17' rx='6' ry='9'/%3E%3Cellipse cx='12' cy='-12' rx='6' ry='8.5'/%3E%3Cellipse cx='23' cy='1' rx='5.5' ry='7.5'/%3E%3Cpath d='M-6 4c-8 4-11 12-7 18 4 7 15 9 24 6 8-3 13-10 11-17-2-8-11-12-19-10-3 .5-6 1.5-9 3z'/%3E%3C/g%3E%3Cg transform='translate(190 48) rotate(28)'%3E%3Crect x='-17' y='-5' width='34' height='10' rx='5'/%3E%3Ccircle cx='-19' cy='-6' r='7'/%3E%3Ccircle cx='-19' cy='6' r='7'/%3E%3Ccircle cx='19' cy='-6' r='7'/%3E%3Ccircle cx='19' cy='6' r='7'/%3E%3C/g%3E%3Cg transform='translate(52 190) rotate(-34)'%3E%3Crect x='-17' y='-5' width='34' height='10' rx='5'/%3E%3Ccircle cx='-19' cy='-6' r='7'/%3E%3Ccircle cx='-19' cy='6' r='7'/%3E%3Ccircle cx='19' cy='-6' r='7'/%3E%3Ccircle cx='19' cy='6' r='7'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-size: 260px 260px;
+}
+
+@utility patron-huellas-claro {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cg transform='translate(46 54) rotate(-14)'%3E%3Cellipse cx='-16' cy='-10' rx='6' ry='8.5'/%3E%3Cellipse cx='-2' cy='-17' rx='6' ry='9'/%3E%3Cellipse cx='12' cy='-12' rx='6' ry='8.5'/%3E%3Cellipse cx='23' cy='1' rx='5.5' ry='7.5'/%3E%3Cpath d='M-6 4c-8 4-11 12-7 18 4 7 15 9 24 6 8-3 13-10 11-17-2-8-11-12-19-10-3 .5-6 1.5-9 3z'/%3E%3C/g%3E%3Cg transform='translate(186 176) rotate(22)'%3E%3Cellipse cx='-16' cy='-10' rx='6' ry='8.5'/%3E%3Cellipse cx='-2' cy='-17' rx='6' ry='9'/%3E%3Cellipse cx='12' cy='-12' rx='6' ry='8.5'/%3E%3Cellipse cx='23' cy='1' rx='5.5' ry='7.5'/%3E%3Cpath d='M-6 4c-8 4-11 12-7 18 4 7 15 9 24 6 8-3 13-10 11-17-2-8-11-12-19-10-3 .5-6 1.5-9 3z'/%3E%3C/g%3E%3Cg transform='translate(190 48) rotate(28)'%3E%3Crect x='-17' y='-5' width='34' height='10' rx='5'/%3E%3Ccircle cx='-19' cy='-6' r='7'/%3E%3Ccircle cx='-19' cy='6' r='7'/%3E%3Ccircle cx='19' cy='-6' r='7'/%3E%3Ccircle cx='19' cy='6' r='7'/%3E%3C/g%3E%3Cg transform='translate(52 190) rotate(-34)'%3E%3Crect x='-17' y='-5' width='34' height='10' rx='5'/%3E%3Ccircle cx='-19' cy='-6' r='7'/%3E%3Ccircle cx='-19' cy='6' r='7'/%3E%3Ccircle cx='19' cy='-6' r='7'/%3E%3Ccircle cx='19' cy='6' r='7'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-size: 260px 260px;
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-crema-50);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: var(--color-naranja-500);
+    color: white;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-naranja-500);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+  }
+}
+
+@layer components {
+  /* Ancho de página común a todas las secciones */
+  .contenedor {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 80rem;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 1024px) {
+    .contenedor {
+      padding-inline: 2rem;
+    }
+  }
+
+  .titulo-seccion {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.08;
+    font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+  }
+
+  .antetitulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-naranja-600);
+  }
+
+  /* Ocultar la barra de scroll en carruseles horizontales */
+  .sin-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .sin-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Respeto por quien prefiere menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
