@@ -320,21 +320,26 @@ export function EstadoVacio({
   texto,
   accion,
   pose = "sentado",
+  imagen,
 }: {
   titulo: string;
   texto: string;
   accion?: ReactNode;
   pose?: "sentado" | "mirada" | "saltando";
+  /** Composición propia en lugar de la pose por defecto (p. ej. el plato). */
+  imagen?: { src: string; ancho: number; alto: number };
 }) {
+  const foto = imagen ?? { src: `/mascota/${pose}.png`, ancho: 520, alto: 560 };
+
   return (
     <div className="flex flex-col items-center gap-5 py-14 text-center">
       <div className="relative">
         <div className="absolute inset-x-2 bottom-3 h-6 rounded-[50%] bg-petroleo-900/10 blur-md" />
         <Image
-          src={`/mascota/${pose}.png`}
+          src={foto.src}
           alt=""
-          width={520}
-          height={560}
+          width={foto.ancho}
+          height={foto.alto}
           className="relative h-40 w-auto object-contain"
         />
       </div>

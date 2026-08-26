@@ -3,22 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  ChevronRight,
-  Menu,
-  Search,
-  ShoppingBag,
-  Sparkles,
-  Truck,
-  User,
-  X,
-} from "lucide-react";
+import { ChevronRight, Menu, Search, Sparkles, Truck, User, X } from "lucide-react";
 import { navegacion, sitio as sitioPorDefecto } from "@/data/sitio";
 import { useTienda } from "@/context/Tienda";
 import { cx } from "@/lib/formato";
 import { Logo } from "@/components/ui/Elementos";
 import { Huella } from "@/components/ui/Iconos";
 import { clasesBoton } from "@/components/ui/Boton";
+import { PlatoCarrito } from "@/components/carrito/PlatoCarrito";
 
 type Contacto = typeof sitioPorDefecto;
 
@@ -30,7 +22,7 @@ export function Encabezado({
   sesionActiva?: boolean;
 }) {
   const ruta = usePathname();
-  const { cantidadTotal, abrirCarrito, setBuscadorAbierto, hidratado } = useTienda();
+  const { setBuscadorAbierto, hidratado } = useTienda();
   const sitio = contacto;
   const sesion = { activa: sesionActiva };
   const [desplazado, setDesplazado] = useState(false);
@@ -143,27 +135,20 @@ export function Encabezado({
               ) : null}
             </Link>
 
-            <button
-              type="button"
-              onClick={abrirCarrito}
-              aria-label={`Carrito, ${cantidadTotal} productos`}
-              className="relative grid h-10 w-10 place-items-center rounded-full text-petroleo-800 transition-colors hover:bg-crema-100 hover:text-naranja-600"
-            >
-              <ShoppingBag className="h-[1.15rem] w-[1.15rem]" />
-              {hidratado && cantidadTotal > 0 ? (
-                <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-naranja-500 px-1 text-[0.62rem] font-bold text-white ring-2 ring-crema-50">
-                  {cantidadTotal}
-                </span>
-              ) : null}
-            </button>
+            <PlatoCarrito className="ml-0.5" />
 
-            <Link
-              href="/productos"
-              className={clasesBoton("primario", "sm", "ml-1.5 hidden lg:inline-flex")}
-            >
-              Hacer pedido
-              <ChevronRight className="h-3.5 w-3.5" />
-            </Link>
+            {/* La visibilidad va en el envoltorio, no en el botón: `hidden`
+                competía con el `inline-flex` de sus clases base y perdía, así
+                que el CTA se colaba en móvil y desbordaba la cabecera. */}
+            <span className="ml-1.5 hidden lg:block">
+              <Link
+                href="/productos"
+                className={clasesBoton("primario", "sm", "whitespace-nowrap")}
+              >
+                Hacer pedido
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            </span>
 
             <button
               type="button"

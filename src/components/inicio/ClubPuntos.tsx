@@ -145,10 +145,12 @@ export function ClubPuntos({
 
             {/* Mascota asomándose */}
             <Image
-              src="/mascota/mirada.png"
+              src="/images/dante/alegre.png"
               alt=""
-              width={716}
-              height={1100}
+              width={624}
+              height={1300}
+              loading="lazy"
+              sizes="208px"
               className="pointer-events-none absolute -bottom-6 -right-3 h-40 w-auto object-contain drop-shadow-[0_18px_20px_rgba(2,34,38,0.3)] md:h-52 lg:-right-8"
             />
             <span

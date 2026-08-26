@@ -43,10 +43,12 @@ export function FaqInicio({
 
           <div className="relative mt-10 hidden lg:block">
             <Image
-              src="/mascota/sentado.png"
+              src="/images/dante/observando.png"
               alt=""
-              width={1029}
-              height={1100}
+              width={893}
+              height={1006}
+              loading="lazy"
+              sizes="192px"
               className="h-48 w-auto object-contain drop-shadow-[0_20px_24px_rgba(8,54,59,0.2)]"
             />
           </div>

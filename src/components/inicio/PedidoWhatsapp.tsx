@@ -69,10 +69,12 @@ export function PedidoWhatsapp({
 
             <div className="relative hidden justify-self-center md:block">
               <Image
-                src="/mascota/mirada.png"
+                src="/images/dante/mirada_feliz.png"
                 alt=""
-                width={716}
-                height={1100}
+                width={780}
+                height={855}
+                loading="lazy"
+                sizes="288px"
                 className="h-64 w-auto object-contain drop-shadow-[0_24px_28px_rgba(2,34,38,0.4)] lg:h-72"
               />
               <span className="absolute -left-10 top-6 max-w-[9rem] rounded-2xl rounded-bl-sm bg-white px-4 py-3 text-sm font-medium text-petroleo-900 shadow-tarjeta">

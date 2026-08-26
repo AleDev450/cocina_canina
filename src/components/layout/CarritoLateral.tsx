@@ -91,7 +91,11 @@ export function CarritoLateral() {
         {carrito.length === 0 ? (
           <div className="flex flex-1 items-center justify-center px-6">
             <EstadoVacio
-              pose="mirada"
+              imagen={{
+                src: "/images/dante/plato_vacio.png",
+                ancho: 1106,
+                alto: 1073,
+              }}
               titulo="El plato está vacío"
               texto="Tu carrito espera. Elige un snack y empecemos a preparar el pedido para tu peludo."
               accion={

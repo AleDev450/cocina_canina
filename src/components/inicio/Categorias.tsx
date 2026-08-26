@@ -37,7 +37,7 @@ export function Categorias({
       <div className="contenedor">
         <CabeceraSeccion
           antetitulo="Nuestro catálogo"
-          titulo="Elige por textura, no por moda"
+          titulo="Todo el catálogo, por categoría"
           texto="Cada categoría responde a una necesidad distinta: premiar sin engordar, entretener por horas o cubrir la alimentación completa del día."
           accion={
             <Link

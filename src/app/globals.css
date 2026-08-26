@@ -2,44 +2,51 @@
 
 /* ==========================================================================
    La Cocina Canina — sistema de diseño
-   Colores tomados del logotipo oficial: petróleo #005159 y naranja #FF5A00.
+   Paleta cálida y artesanal: marfil #F7F0E6, petróleo #075159, naranja #F56B27
+   y durazno #F3D9C4. Los nombres de token no cambian, solo sus valores: así el
+   rediseño se propaga a la tienda y a los 19 módulos del CMS desde un solo
+   sitio, sin editar componente por componente.
    ========================================================================== */
 
 @theme {
   /* Verde petróleo — color dominante de la marca */
-  --color-petroleo-50: #f0f7f7;
-  --color-petroleo-100: #daedee;
-  --color-petroleo-200: #b6dbdd;
-  --color-petroleo-300: #85c2c6;
-  --color-petroleo-400: #4ba2a9;
-  --color-petroleo-500: #22838b;
-  --color-petroleo-600: #0d6a72;
-  --color-petroleo-700: #005159;
-  --color-petroleo-800: #05434a;
-  --color-petroleo-900: #08363b;
+  --color-petroleo-50: #eff8f8;
+  --color-petroleo-100: #d9eff0;
+  --color-petroleo-200: #b4dee1;
+  --color-petroleo-300: #7fc4c9;
+  --color-petroleo-400: #3fa5ad;
+  --color-petroleo-500: #10858f;
+  --color-petroleo-600: #0a6a73;
+  --color-petroleo-700: #075159;
+  --color-petroleo-800: #06444b;
+  --color-petroleo-900: #05373c;
   --color-petroleo-950: #022226;
 
   /* Naranja — reservado para acciones y acentos */
-  --color-naranja-50: #fff4ec;
-  --color-naranja-100: #ffe4d2;
-  --color-naranja-200: #ffc5a4;
-  --color-naranja-300: #ff9d69;
-  --color-naranja-400: #ff7b36;
-  --color-naranja-500: #ff5a00;
-  --color-naranja-600: #e04e00;
-  --color-naranja-700: #b83e00;
-  --color-naranja-800: #8c3000;
-  --color-naranja-900: #6b2500;
+  --color-naranja-50: #fff3ec;
+  --color-naranja-100: #ffe5d6;
+  --color-naranja-200: #fecbae;
+  --color-naranja-300: #fdaa7f;
+  --color-naranja-400: #fa8a52;
+  --color-naranja-500: #f56b27;
+  --color-naranja-600: #dc5615;
+  --color-naranja-700: #b44310;
+  --color-naranja-800: #8c330b;
+  --color-naranja-900: #6b2708;
 
-  /* Cremas de fondo */
-  --color-crema-50: #fdfaf5;
-  --color-crema-100: #faf4ea;
-  --color-crema-200: #f3e9d9;
-  --color-crema-300: #e9dbc6;
+  /* Marfiles de fondo */
+  --color-crema-50: #fdfbf7;
+  --color-crema-100: #f7f0e6;
+  --color-crema-200: #efe4d4;
+  --color-crema-300: #e5d5bf;
+
+  /* Durazno — superficies suaves y bloques de apoyo */
+  --color-durazno: #f3d9c4;
+  --color-durazno-claro: #f9ebe0;
 
   /* Texto */
-  --color-tinta: #17302f;
-  --color-grafito: #5a6a69;
+  --color-tinta: #103f42;
+  --color-grafito: #4f6668;
 
   /* Apoyo (usados con moderación: estados, gráficos del panel) */
   --color-hoja-100: #e4f2e2;
@@ -108,7 +115,7 @@
    -------------------------------------------------------------------------- */
 
 @utility patron-huellas {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='%23005159' fill-opacity='0.05'%3E%3Cg transform='translate(46 54) rotate(-14)'%3E%3Cellipse cx='-16' cy='-10' rx='6' ry='8.5'/%3E%3Cellipse cx='-2' cy='-17' rx='6' ry='9'/%3E%3Cellipse cx='12' cy='-12' rx='6' ry='8.5'/%3E%3Cellipse cx='23' cy='1' rx='5.5' ry='7.5'/%3E%3Cpath d='M-6 4c-8 4-11 12-7 18 4 7 15 9 24 6 8-3 13-10 11-17-2-8-11-12-19-10-3 .5-6 1.5-9 3z'/%3E%3C/g%3E%3Cg transform='translate(186 176) rotate(22)'%3E%3Cellipse cx='-16' cy='-10' rx='6' ry='8.5'/%3E%3Cellipse cx='-2' cy='-17' rx='6' ry='9'/%3E%3Cellipse cx='12' cy='-12' rx='6' ry='8.5'/%3E%3Cellipse cx='23' cy='1' rx='5.5' ry='7.5'/%3E%3Cpath d='M-6 4c-8 4-11 12-7 18 4 7 15 9 24 6 8-3 13-10 11-17-2-8-11-12-19-10-3 .5-6 1.5-9 3z'/%3E%3C/g%3E%3Cg transform='translate(190 48) rotate(28)'%3E%3Crect x='-17' y='-5' width='34' height='10' rx='5'/%3E%3Ccircle cx='-19' cy='-6' r='7'/%3E%3Ccircle cx='-19' cy='6' r='7'/%3E%3Ccircle cx='19' cy='-6' r='7'/%3E%3Ccircle cx='19' cy='6' r='7'/%3E%3C/g%3E%3Cg transform='translate(52 190) rotate(-34)'%3E%3Crect x='-17' y='-5' width='34' height='10' rx='5'/%3E%3Ccircle cx='-19' cy='-6' r='7'/%3E%3Ccircle cx='-19' cy='6' r='7'/%3E%3Ccircle cx='19' cy='-6' r='7'/%3E%3Ccircle cx='19' cy='6' r='7'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='%23075159' fill-opacity='0.05'%3E%3Cg transform='translate(46 54) rotate(-14)'%3E%3Cellipse cx='-16' cy='-10' rx='6' ry='8.5'/%3E%3Cellipse cx='-2' cy='-17' rx='6' ry='9'/%3E%3Cellipse cx='12' cy='-12' rx='6' ry='8.5'/%3E%3Cellipse cx='23' cy='1' rx='5.5' ry='7.5'/%3E%3Cpath d='M-6 4c-8 4-11 12-7 18 4 7 15 9 24 6 8-3 13-10 11-17-2-8-11-12-19-10-3 .5-6 1.5-9 3z'/%3E%3C/g%3E%3Cg transform='translate(186 176) rotate(22)'%3E%3Cellipse cx='-16' cy='-10' rx='6' ry='8.5'/%3E%3Cellipse cx='-2' cy='-17' rx='6' ry='9'/%3E%3Cellipse cx='12' cy='-12' rx='6' ry='8.5'/%3E%3Cellipse cx='23' cy='1' rx='5.5' ry='7.5'/%3E%3Cpath d='M-6 4c-8 4-11 12-7 18 4 7 15 9 24 6 8-3 13-10 11-17-2-8-11-12-19-10-3 .5-6 1.5-9 3z'/%3E%3C/g%3E%3Cg transform='translate(190 48) rotate(28)'%3E%3Crect x='-17' y='-5' width='34' height='10' rx='5'/%3E%3Ccircle cx='-19' cy='-6' r='7'/%3E%3Ccircle cx='-19' cy='6' r='7'/%3E%3Ccircle cx='19' cy='-6' r='7'/%3E%3Ccircle cx='19' cy='6' r='7'/%3E%3C/g%3E%3Cg transform='translate(52 190) rotate(-34)'%3E%3Crect x='-17' y='-5' width='34' height='10' rx='5'/%3E%3Ccircle cx='-19' cy='-6' r='7'/%3E%3Ccircle cx='-19' cy='6' r='7'/%3E%3Ccircle cx='19' cy='-6' r='7'/%3E%3Ccircle cx='19' cy='6' r='7'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   background-size: 260px 260px;
 }
 
@@ -128,7 +135,7 @@
   }
 
   body {
-    background-color: var(--color-crema-50);
+    background-color: var(--color-crema-100);
     color: var(--color-tinta);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;

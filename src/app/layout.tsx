@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
 import { ProveedorTienda } from "@/context/Tienda";
 import { Encabezado } from "@/components/layout/Encabezado";
@@ -16,17 +16,20 @@ import { obtenerRegla } from "@/server/recompensas";
 import { reglaPuntos as REGLA_POR_DEFECTO } from "@/data/recompensas";
 import { hayConexion } from "@/lib/supabase/entorno";
 
+// Fraunces para títulos y frases editoriales; Manrope para todo lo demás:
+// navegación, párrafos, botones, precios, formularios y etiquetas.
 const display = Fraunces({
   subsets: ["latin"],
   variable: "--fuente-display",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600", "700"],
 });
 
-const sans = Plus_Jakarta_Sans({
+const sans = Manrope({
   subsets: ["latin"],
   variable: "--fuente-sans",
   display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -53,7 +56,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#005159",
+  themeColor: "#075159",
 };
 
 export default async function LayoutRaiz({

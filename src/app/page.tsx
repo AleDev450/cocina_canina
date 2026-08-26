@@ -1,5 +1,7 @@
 import { Hero } from "@/components/inicio/Hero";
+import { FranjaBeneficios } from "@/components/inicio/FranjaBeneficios";
 import { QuienesSomos } from "@/components/inicio/QuienesSomos";
+import { Texturas } from "@/components/inicio/Texturas";
 import { Categorias } from "@/components/inicio/Categorias";
 import { Destacados } from "@/components/inicio/Destacados";
 import { BarfInicio } from "@/components/inicio/BarfInicio";
@@ -72,10 +74,18 @@ export default async function Inicio() {
 
   return (
     <>
-      {visible("hero") ? <Hero hero={hero} whatsapp={whatsapp} /> : null}
+      {visible("hero") ? (
+        <>
+          <Hero hero={hero} whatsapp={whatsapp} />
+          <FranjaBeneficios beneficios={hero.beneficios} />
+        </>
+      ) : null}
       {visible("nosotros") ? <QuienesSomos quienesSomos={nosotros} /> : null}
       {visible("categorias") ? (
-        <Categorias categorias={categorias} conteos={conteos} />
+        <>
+          <Texturas />
+          <Categorias categorias={categorias} conteos={conteos} />
+        </>
       ) : null}
       {visible("destacados") && destacados.length > 0 ? (
         <Destacados productos={destacados} />

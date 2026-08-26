@@ -3,35 +3,7 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import { hero as heroPorDefecto } from "@/data/sitio";
 import { consultaGeneral } from "@/lib/whatsapp";
 import { Boton } from "@/components/ui/Boton";
-import { Huella, Onda, iconosPorNombre, type NombreIcono } from "@/components/ui/Iconos";
-
-/** Snacks que flotan alrededor de la mascota. */
-const FLOTANTES = [
-  {
-    src: "/productos/patitas-de-pollo.png",
-    alto: "top-[6%]",
-    lado: "left-[2%]",
-    medida: "w-24 md:w-32",
-    retraso: "0.5s",
-    duracion: "7s",
-  },
-  {
-    src: "/productos/traquea-de-res.png",
-    alto: "top-[30%]",
-    lado: "right-[1%]",
-    medida: "w-24 md:w-32",
-    retraso: "1.4s",
-    duracion: "6s",
-  },
-  {
-    src: "/productos/pejerrey.png",
-    alto: "bottom-[16%]",
-    lado: "left-[0%]",
-    medida: "w-16 md:w-20",
-    retraso: "0.9s",
-    duracion: "8s",
-  },
-];
+import { Huella, Onda } from "@/components/ui/Iconos";
 
 export function Hero({
   hero = heroPorDefecto,
@@ -41,15 +13,14 @@ export function Hero({
   whatsapp?: string;
 }) {
   return (
-    <section className="relative isolate overflow-hidden bg-crema-50">
-      {/* Fondo */}
+    <section className="relative isolate overflow-hidden bg-crema-100">
       <div className="absolute inset-0 patron-huellas opacity-70" aria-hidden="true" />
       <div
-        className="absolute -left-40 top-[-20%] h-[34rem] w-[34rem] rounded-full bg-naranja-100/35 blur-3xl"
+        className="absolute -left-40 top-[-20%] h-[34rem] w-[34rem] rounded-full bg-durazno/40 blur-3xl"
         aria-hidden="true"
       />
 
-      <div className="contenedor relative grid items-center gap-12 pb-20 pt-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pb-28 lg:pt-16">
+      <div className="contenedor relative grid items-center gap-10 pb-16 pt-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pb-20 lg:pt-16">
         {/* Texto */}
         <div className="max-w-xl">
           <span
@@ -84,8 +55,9 @@ export function Hero({
             </span>
           </h1>
 
+          {/* max-w-[34ch] mantiene el texto en tres líneas como mucho */}
           <p
-            className="mt-6 max-w-lg animate-aparecer text-[1.02rem] leading-relaxed text-grafito"
+            className="mt-6 max-w-[34ch] animate-aparecer text-[1.02rem] leading-relaxed text-grafito"
             style={{ animationDelay: "0.2s" }}
           >
             {hero.subtitulo}
@@ -101,88 +73,72 @@ export function Hero({
             </Boton>
             <Boton href={consultaGeneral(whatsapp)} externo variante="contorno" medida="lg">
               <MessageCircle className="h-4 w-4 text-[#25D366]" />
-              Hacer pedido por WhatsApp
+              Pedir por WhatsApp
             </Boton>
           </div>
-
-          {/* Beneficios */}
-          <ul
-            className="mt-11 grid animate-aparecer gap-x-6 gap-y-5 sm:grid-cols-2"
-            style={{ animationDelay: "0.36s" }}
-          >
-            {hero.beneficios.map((b) => {
-              const Icono = iconosPorNombre[b.icono as NombreIcono];
-              return (
-                <li key={b.titulo} className="flex items-start gap-3">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-white text-petroleo-700 shadow-suave">
-                    <Icono className="h-5 w-5" />
-                  </span>
-                  <span className="pt-0.5">
-                    <span className="block text-sm font-bold text-petroleo-900">
-                      {b.titulo}
-                    </span>
-                    <span className="block text-xs text-grafito">{b.detalle}</span>
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
         </div>
 
-        {/* Imagen */}
+        {/* Dante sobre la forma orgánica */}
         <div
           className="relative mx-auto w-full max-w-lg animate-aparecer lg:max-w-none"
           style={{ animationDelay: "0.18s" }}
         >
-          <div className="relative aspect-[4/4.4] w-full">
-            {/* Formas curvas en verde petróleo */}
+          <div className="relative aspect-[4/4.2] w-full">
             <div
-              className="absolute inset-x-[6%] bottom-0 top-[10%] rounded-[46%_54%_42%_58%/40%_38%_62%_60%] bg-petroleo-700"
+              className="absolute inset-x-[6%] bottom-0 top-[8%] rounded-[46%_54%_42%_58%/40%_38%_62%_60%] bg-petroleo-700"
               aria-hidden="true"
             />
             <div
-              className="absolute inset-x-[13%] bottom-[6%] top-[18%] rounded-[54%_46%_58%_42%/48%_52%_48%_52%] border border-white/15"
+              className="absolute inset-x-[13%] bottom-[6%] top-[16%] rounded-[54%_46%_58%_42%/48%_52%_48%_52%] border border-white/15"
               aria-hidden="true"
             />
             <div
-              className="absolute inset-x-[6%] bottom-0 top-[10%] rounded-[46%_54%_42%_58%/40%_38%_62%_60%] patron-huellas-claro"
+              className="absolute inset-x-[6%] bottom-0 top-[8%] rounded-[46%_54%_42%_58%/40%_38%_62%_60%] patron-huellas-claro"
               aria-hidden="true"
             />
 
-            {/* Mascota */}
             <Image
-              src="/mascota/saltando.png"
-              alt="Perro de La Cocina Canina saltando por sus snacks"
-              width={733}
-              height={1100}
+              src="/images/dante/sonriendo.png"
+              alt="Dante, la mascota de La Cocina Canina, mirando hacia arriba"
+              width={975}
+              height={1300}
               priority
-              className="absolute bottom-0 left-1/2 h-[94%] w-auto -translate-x-1/2 object-contain drop-shadow-[0_30px_36px_rgba(2,34,38,0.35)]"
+              sizes="(max-width: 1023px) 90vw, 46vw"
+              className="absolute bottom-0 left-1/2 h-[98%] w-auto -translate-x-1/2 object-contain drop-shadow-[0_30px_36px_rgba(2,34,38,0.35)]"
             />
 
-            {/* Snacks flotando */}
-            {FLOTANTES.map((f) => (
-              <span
-                key={f.src}
-                className={`absolute ${f.alto} ${f.lado} ${f.medida} animate-flotar`}
-                style={{ animationDelay: f.retraso, animationDuration: f.duracion }}
-                aria-hidden="true"
+            {/* Acentos de marca: trazos y corazón, puramente decorativos */}
+            <svg
+              viewBox="0 0 60 60"
+              className="absolute right-[4%] top-[16%] w-10 text-naranja-500 md:w-14"
+              aria-hidden="true"
+            >
+              <g
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="5"
+                strokeLinecap="round"
               >
-                <span className="block rounded-full bg-white/90 p-3 shadow-tarjeta backdrop-blur">
-                  <Image
-                    src={f.src}
-                    alt=""
-                    width={220}
-                    height={220}
-                    className="h-full w-full object-contain"
-                  />
-                </span>
-              </span>
-            ))}
+                <path d="M8 30h14" />
+                <path d="M14 14l10 9" />
+                <path d="M14 46l10-9" />
+              </g>
+            </svg>
+            <svg
+              viewBox="0 0 32 30"
+              className="absolute left-[2%] top-[52%] w-6 text-naranja-500 md:w-8"
+              aria-hidden="true"
+            >
+              <path
+                fill="currentColor"
+                d="M16 29S1 20 1 10.5A8.5 8.5 0 0 1 16 5a8.5 8.5 0 0 1 15 5.5C31 20 16 29 16 29z"
+              />
+            </svg>
           </div>
         </div>
       </div>
 
-      <Onda className="block h-8 w-full text-white md:h-12" />
+      <Onda className="block h-8 w-full text-crema-50 md:h-12" />
     </section>
   );
 }

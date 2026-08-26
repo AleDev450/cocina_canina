@@ -64,10 +64,12 @@ export function QuienesSomos({
 
             {/* Perro detrás del mostrador */}
             <Image
-              src="/mascota/sentado.png"
-              alt="La mascota de La Cocina Canina en el mostrador de la tienda"
-              width={1029}
-              height={1100}
+              src="/images/dante/olfateo_de_productos.png"
+              alt="Dante olfateando dos bolsas de snacks de La Cocina Canina"
+              width={813}
+              height={1300}
+              loading="lazy"
+              sizes="(max-width: 1023px) 90vw, 42vw"
               className="absolute bottom-[24%] left-1/2 h-[58%] w-auto -translate-x-1/2 object-contain drop-shadow-[0_24px_28px_rgba(2,34,38,0.4)]"
             />
 
