@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import type { PreguntaFrecuente } from "@/lib/tipos";
 import { consultaGeneral } from "@/lib/whatsapp";
@@ -39,18 +38,6 @@ export function FaqInicio({
               <MessageCircle className="h-4 w-4 text-[#25D366]" />
               Preguntar por WhatsApp
             </Boton>
-          </div>
-
-          <div className="relative mt-10 hidden lg:block">
-            <Image
-              src="/images/dante/observando.png"
-              alt=""
-              width={893}
-              height={1006}
-              loading="lazy"
-              sizes="192px"
-              className="h-48 w-auto object-contain drop-shadow-[0_20px_24px_rgba(8,54,59,0.2)]"
-            />
           </div>
         </div>
 

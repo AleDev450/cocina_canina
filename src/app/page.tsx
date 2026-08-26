@@ -8,7 +8,6 @@ import { BarfInicio } from "@/components/inicio/BarfInicio";
 import { PorMayorBanner } from "@/components/inicio/PorMayorBanner";
 import { ClubPuntos } from "@/components/inicio/ClubPuntos";
 import { PedidoWhatsapp } from "@/components/inicio/PedidoWhatsapp";
-import { Testimonios } from "@/components/inicio/Testimonios";
 import { FaqInicio } from "@/components/inicio/FaqInicio";
 import { obtenerBarf, obtenerCategorias, obtenerProductos } from "@/server/catalogo";
 import {
@@ -18,7 +17,6 @@ import {
   obtenerNosotros,
   obtenerPreguntas,
   obtenerSecciones,
-  obtenerTestimonios,
 } from "@/server/contenido";
 import { obtenerRecompensas, obtenerRegla } from "@/server/recompensas";
 import { perfilActual } from "@/server/sesion";
@@ -37,7 +35,6 @@ export default async function Inicio() {
     productos,
     barf,
     bloqueWhatsapp,
-    testimonios,
     preguntas,
     regla,
     recompensas,
@@ -51,7 +48,6 @@ export default async function Inicio() {
     obtenerProductos(),
     obtenerBarf(),
     obtenerBloqueWhatsapp(),
-    obtenerTestimonios(),
     obtenerPreguntas(),
     obtenerRegla(),
     obtenerRecompensas(),
@@ -102,9 +98,6 @@ export default async function Inicio() {
       {visible("mayor") ? <PorMayorBanner /> : null}
       {visible("whatsapp") ? (
         <PedidoWhatsapp bloque={bloqueWhatsapp} contacto={config.contacto} />
-      ) : null}
-      {visible("testimonios") && testimonios.length > 0 ? (
-        <Testimonios testimonios={testimonios} />
       ) : null}
       {visible("faq") && preguntas.length > 0 ? (
         <FaqInicio preguntas={preguntas} whatsapp={whatsapp} />

@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { MessageCircle, ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { consultaGeneral } from "@/lib/whatsapp";
 import { useTienda } from "@/context/Tienda";
 import { cx, precio } from "@/lib/formato";
@@ -39,13 +40,21 @@ export function AccionesFlotantes({ whatsapp }: { whatsapp?: string }) {
         rel="noopener noreferrer"
         aria-label="Escríbenos por WhatsApp"
         className={cx(
-          "group fixed right-4 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-[#053f22] shadow-elevada transition-all duration-300 hover:scale-110 md:right-7",
+          "group fixed right-4 z-[60] flex h-16 w-16 items-center justify-center rounded-full shadow-elevada transition-all duration-300 hover:scale-110 md:right-7",
           conCarrito ? "bottom-24 md:bottom-7" : "bottom-6 md:bottom-7",
           visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
         )}
       >
-        <span className="absolute inset-0 animate-latir rounded-full bg-[#25D366]/40" />
-        <MessageCircle className="relative h-6 w-6" strokeWidth={2.2} />
+        <span className="absolute inset-1 animate-latir rounded-full bg-[#25D366]/40" />
+        {/* Dante dentro del globo verde: la propia ilustración hace de botón. */}
+        <Image
+          src="/images/dante/whatsapp.png"
+          alt=""
+          width={256}
+          height={256}
+          aria-hidden="true"
+          className="relative h-full w-full object-contain drop-shadow-[0_6px_10px_rgba(2,34,38,0.35)]"
+        />
         <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-full bg-petroleo-800 px-3.5 py-2 text-xs font-semibold text-white opacity-0 shadow-suave transition-opacity duration-200 group-hover:opacity-100 md:block">
           Haz tu pedido por WhatsApp
         </span>

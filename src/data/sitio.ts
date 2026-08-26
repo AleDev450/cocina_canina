@@ -25,7 +25,6 @@ export const navegacion = [
   { nombre: "Alimentación BARF", href: "/barf" },
   { nombre: "Por mayor", href: "/por-mayor" },
   { nombre: "Recompensas", href: "/recompensas" },
-  { nombre: "Preguntas frecuentes", href: "/preguntas-frecuentes" },
 ];
 
 export const hero = {

@@ -31,7 +31,7 @@ export default async function PaginaFaq() {
         titulo="Preguntas frecuentes"
         texto="Conservación, dureza, delivery, puntos y BARF. Si algo no está acá, escríbenos y lo resolvemos al toque."
         migajas={[{ nombre: "Inicio", href: "/" }, { nombre: "Preguntas frecuentes" }]}
-        pose="mirada"
+        imagen={{ src: "/images/dante/observando.png", ancho: 893, alto: 1011 }}
       />
 
       <section className="py-14 md:py-16">

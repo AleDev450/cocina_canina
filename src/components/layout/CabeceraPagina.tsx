@@ -11,6 +11,7 @@ export function CabeceraPagina({
   migajas,
   acciones,
   pose,
+  imagen,
 }: {
   antetitulo?: string;
   titulo: string;
@@ -18,7 +19,10 @@ export function CabeceraPagina({
   migajas: Array<{ nombre: string; href?: string }>;
   acciones?: ReactNode;
   pose?: "sentado" | "mirada" | "saltando";
+  /** Foto propia en lugar de la pose por defecto (p. ej. una de Dante). */
+  imagen?: { src: string; ancho: number; alto: number; alt?: string };
 }) {
+  const foto = imagen ?? (pose ? { src: `/mascota/${pose}.png`, ancho: 733, alto: 1100 } : null);
   return (
     <section className="relative isolate overflow-hidden bg-petroleo-800 text-white">
       <div className="absolute inset-0 patron-huellas-claro" aria-hidden="true" />
@@ -50,12 +54,13 @@ export function CabeceraPagina({
 
           {acciones ? <div className="shrink-0">{acciones}</div> : null}
 
-          {pose && !acciones ? (
+          {foto && !acciones ? (
             <Image
-              src={`/mascota/${pose}.png`}
-              alt=""
-              width={733}
-              height={1100}
+              src={foto.src}
+              alt={imagen?.alt ?? ""}
+              width={foto.ancho}
+              height={foto.alto}
+              sizes="208px"
               className="hidden h-44 w-auto shrink-0 self-end object-contain drop-shadow-[0_20px_24px_rgba(2,34,38,0.4)] md:block lg:h-52"
             />
           ) : null}
