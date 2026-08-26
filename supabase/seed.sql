@@ -1,5 +1,5 @@
 -- =============================================================================
--- La Cocina Canina — 04. Datos iniciales
+-- La Cocina Canina — datos iniciales
 --
 -- ARCHIVO GENERADO por scripts/generar-seed.ts — no editar a mano.
 -- Para regenerarlo: npm run seed
@@ -1377,12 +1377,6 @@ values ('mayor', 'Compra por mayor', 6, true)
 on conflict (clave) do update set nombre = excluded.nombre;
 insert into secciones_inicio (clave, nombre, orden, visible)
 values ('whatsapp', 'Pedido por WhatsApp', 7, true)
-on conflict (clave) do update set nombre = excluded.nombre;
-insert into secciones_inicio (clave, nombre, orden, visible)
-values ('testimonios', 'Testimonios', 8, true)
-on conflict (clave) do update set nombre = excluded.nombre;
-insert into secciones_inicio (clave, nombre, orden, visible)
-values ('faq', 'Preguntas frecuentes', 9, true)
 on conflict (clave) do update set nombre = excluded.nombre;
 
 -- ---------------------------- Preguntas frecuentes ------------------------

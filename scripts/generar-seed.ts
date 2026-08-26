@@ -212,8 +212,6 @@ const SECCIONES = [
   ["club", "Club Cocina Canina"],
   ["mayor", "Compra por mayor"],
   ["whatsapp", "Pedido por WhatsApp"],
-  ["testimonios", "Testimonios"],
-  ["faq", "Preguntas frecuentes"],
 ];
 SECCIONES.forEach(([clave, nombre], i) => {
   w(`insert into secciones_inicio (clave, nombre, orden, visible)
