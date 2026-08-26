@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { clienteServidor } from "@/lib/supabase/servidor";
 import {
-  INICIAL,
   fallo,
   exito,
   validar,
@@ -13,7 +12,6 @@ import {
   type Resultado,
 } from "@/server/acciones/comunes";
 
-export { INICIAL };
 
 const CORREO = z
   .string()

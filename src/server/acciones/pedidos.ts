@@ -6,7 +6,6 @@ import { clienteServidor, clienteAdministrador } from "@/lib/supabase/servidor";
 import { exigirGrupo, usuarioActual } from "@/server/sesion";
 import { obtenerRegla, calcularPuntos } from "@/server/recompensas";
 import {
-  INICIAL,
   exito,
   fallo,
   mensajeDeError,
@@ -15,7 +14,6 @@ import {
   type Resultado,
 } from "@/server/acciones/comunes";
 
-export { INICIAL };
 
 /* ============================ Crear pedido =============================== */
 

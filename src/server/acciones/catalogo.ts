@@ -6,7 +6,6 @@ import { z } from "zod";
 import { clienteServidor } from "@/lib/supabase/servidor";
 import { exigirGrupo } from "@/server/sesion";
 import {
-  INICIAL,
   aSlug,
   casilla,
   comasATexto,
@@ -19,7 +18,6 @@ import {
   type Resultado,
 } from "@/server/acciones/comunes";
 
-export { INICIAL };
 
 /** Refresca la tienda y el CMS tras cualquier cambio de catálogo. */
 function refrescarCatalogo(slug?: string) {

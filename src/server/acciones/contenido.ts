@@ -5,7 +5,6 @@ import { z } from "zod";
 import { clienteServidor } from "@/lib/supabase/servidor";
 import { exigirGrupo } from "@/server/sesion";
 import {
-  INICIAL,
   casilla,
   exito,
   fallo,
@@ -15,7 +14,6 @@ import {
   type Resultado,
 } from "@/server/acciones/comunes";
 
-export { INICIAL };
 
 function refrescarSitio() {
   revalidatePath("/", "layout");

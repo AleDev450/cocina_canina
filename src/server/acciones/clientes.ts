@@ -5,7 +5,6 @@ import { z } from "zod";
 import { clienteServidor } from "@/lib/supabase/servidor";
 import { exigirCliente } from "@/server/sesion";
 import {
-  INICIAL,
   casilla,
   comasATexto,
   exito,
@@ -16,7 +15,6 @@ import {
   type Resultado,
 } from "@/server/acciones/comunes";
 
-export { INICIAL };
 
 /* --------------------------------- Perfil --------------------------------- */
 

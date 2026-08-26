@@ -5,7 +5,6 @@ import { z } from "zod";
 import { clienteServidor, clienteAdministrador } from "@/lib/supabase/servidor";
 import { exigirMiembro, GRUPOS } from "@/server/sesion";
 import {
-  INICIAL,
   casilla,
   exito,
   fallo,
@@ -15,7 +14,6 @@ import {
   type Resultado,
 } from "@/server/acciones/comunes";
 
-export { INICIAL };
 
 const ROLES = ["administrador", "produccion", "reparto", "contenido", "atencion"] as const;
 
