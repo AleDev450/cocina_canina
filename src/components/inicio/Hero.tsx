@@ -3,7 +3,6 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import { hero as heroPorDefecto } from "@/data/sitio";
 import { consultaGeneral } from "@/lib/whatsapp";
 import { Boton } from "@/components/ui/Boton";
-import { SelloCircular } from "@/components/ui/Elementos";
 import { Huella, Onda, iconosPorNombre, type NombreIcono } from "@/components/ui/Iconos";
 
 /** Snacks que flotan alrededor de la mascota. */
@@ -179,12 +178,6 @@ export function Hero({
                 </span>
               </span>
             ))}
-
-            {/* Sello */}
-            <SelloCircular
-              texto="Perfecto para perros de todas las edades"
-              className="absolute -bottom-3 -right-1 w-32 md:w-36 lg:-right-4"
-            />
           </div>
         </div>
       </div>
