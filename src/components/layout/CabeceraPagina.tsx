@@ -67,7 +67,10 @@ export function CabeceraPagina({
         </div>
       </div>
 
-      <Onda className="block h-8 w-full text-crema-50 md:h-10" />
+      {/* La ola va rellena del color del contenido que viene debajo. El área
+          de la página hereda el fondo del body (marfil), no crema-50: con el
+          color anterior quedaba una franja clara de ~19px bajo la cabecera. */}
+      <Onda className="block h-8 w-full text-crema-100 md:h-10" />
     </section>
   );
 }

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Manrope } from "next/font/google";
+import { Manrope, Young_Serif } from "next/font/google";
 import "./globals.css";
 import { ProveedorTienda } from "@/context/Tienda";
 import { Encabezado } from "@/components/layout/Encabezado";
@@ -16,13 +16,17 @@ import { obtenerRegla } from "@/server/recompensas";
 import { reglaPuntos as REGLA_POR_DEFECTO } from "@/data/recompensas";
 import { hayConexion } from "@/lib/supabase/entorno";
 
-// Fraunces para títulos y frases editoriales; Manrope para todo lo demás:
+// Young Serif para títulos y frases editoriales; Manrope para todo lo demás:
 // navegación, párrafos, botones, precios, formularios y etiquetas.
-const display = Fraunces({
+//
+// Young Serif solo se publica en un grosor. El peso ya lo da su trazo, que es
+// grueso de fábrica; en globals.css se desactiva la negrita sintética para que
+// el navegador no la falsifique al encontrar `font-semibold`.
+const display = Young_Serif({
   subsets: ["latin"],
   variable: "--fuente-display",
   display: "swap",
-  weight: ["500", "600", "700"],
+  weight: ["400"],
 });
 
 const sans = Manrope({

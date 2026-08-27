@@ -28,7 +28,11 @@ export function PieDePagina({ contacto = sitioPorDefecto }: { contacto?: Contact
   const sitio = contacto;
   return (
     <footer className="relative mt-auto bg-petroleo-800 text-petroleo-100">
-      <Onda className="absolute -top-[1px] left-0 h-10 w-full text-crema-50" invertida />
+      {/* La ola se dibuja ENCIMA del pie y con su mismo color, no con el de la
+          sección anterior: así el borde ondulado funciona sobre cualquier
+          fondo. Rellenarla del color de arriba obligaba a acertar página por
+          página y dejaba una franja clara donde no coincidía. */}
+      <Onda className="absolute -top-10 left-0 h-10 w-full text-petroleo-800" />
 
       <div className="patron-huellas-claro">
         <div className="contenedor pb-10 pt-24">

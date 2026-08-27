@@ -125,6 +125,22 @@
 }
 
 /* --------------------------------------------------------------------------
+   Young Serif se publica en un único grosor. Sin esto, cada `font-semibold` o
+   `font-bold` que hay en los títulos haría que el navegador dibujara una
+   negrita falsa —engrosando los trazos a mano— y el texto se ve sucio y
+   emborronado. Va fuera de @layer para ganarle a las utilidades de Tailwind.
+   -------------------------------------------------------------------------- */
+
+h1,
+h2,
+h3,
+h4,
+.font-display,
+.titulo-seccion {
+  font-synthesis-weight: none;
+}
+
+/* --------------------------------------------------------------------------
    Base
    -------------------------------------------------------------------------- */
 
