@@ -34,7 +34,7 @@ export default async function PaginaPorMayor() {
         titulo="Compra por mayor"
         texto="Precios especiales para tiendas, distribuidores y clientes frecuentes."
         migajas={[{ nombre: "Inicio", href: "/" }, { nombre: "Compra por mayor" }]}
-        pose="sentado"
+        imagen={{ src: "/images/dante/alimentamos_felicidad.png", ancho: 1085, alto: 1282 }}
       />
 
       {/* Condiciones */}

@@ -80,7 +80,7 @@ export default async function PaginaRecompensas() {
         titulo="Club Cocina Canina"
         texto={`Por cada S/ ${regla.montoPorPunto.toFixed(2)} de compra ganas ${regla.puntosOtorgados} punto. Sin costo de membresía y con campañas de puntos dobles durante el año.`}
         migajas={[{ nombre: "Inicio", href: "/" }, { nombre: "Recompensas" }]}
-        pose="saltando"
+        imagen={{ src: "/images/dante/recompensas.png", ancho: 1300, alto: 872 }}
       />
 
       <section className="py-14">
@@ -170,10 +170,12 @@ export default async function PaginaRecompensas() {
               </div>
 
               <Image
-                src="/mascota/mirada.png"
+                src="/images/dante/saludo.png"
                 alt=""
-                width={716}
-                height={1100}
+                width={1033}
+                height={1300}
+                loading="lazy"
+                sizes="208px"
                 className="pointer-events-none absolute -bottom-4 right-2 hidden h-52 w-auto object-contain drop-shadow-[0_20px_24px_rgba(2,34,38,0.4)] lg:block"
               />
             </div>

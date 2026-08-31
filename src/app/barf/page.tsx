@@ -67,7 +67,7 @@ export default async function PaginaBarf() {
         titulo="Alimentación natural diseñada para ellos"
         texto="Una dieta fresca y balanceada que respeta las necesidades biológicas de tu mascota y contribuye a mejorar su bienestar y calidad de vida."
         migajas={[{ nombre: "Inicio", href: "/" }, { nombre: "Alimentación BARF" }]}
-        pose="saltando"
+        imagen={{ src: "/images/dante/alimentacion_natural.png", ancho: 1300, alto: 1001 }}
       />
 
       {/* Por qué BARF */}

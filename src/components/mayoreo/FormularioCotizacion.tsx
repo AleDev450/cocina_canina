@@ -35,7 +35,7 @@ export function FormularioCotizacion({ whatsapp }: { whatsapp?: string }) {
     return (
       <div className="rounded-blob border border-petroleo-700/10 bg-white p-8 md:p-12">
         <EstadoVacio
-          pose="saltando"
+          imagen={{ src: "/images/dante/formulario.png", ancho: 945, alto: 1300 }}
           titulo="¡Solicitud recibida!"
           texto={`Gracias, ${datos.negocio || "vecino"}. Revisaremos disponibilidad y te enviamos la cotización formal en menos de 24 horas hábiles. Si quieres adelantarlo, escríbenos directo por WhatsApp.`}
           accion={

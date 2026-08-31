@@ -186,10 +186,11 @@ export function CalculadorBarf({ productosBarf }: { productosBarf: ProductoBarf[
                 ) : (
                   <div className="flex flex-1 flex-col items-center justify-center text-center">
                     <Image
-                      src="/mascota/sentado.png"
+                      src="/images/dante/formulario.png"
                       alt=""
-                      width={1029}
-                      height={1100}
+                      width={945}
+                      height={1300}
+                      sizes="176px"
                       className="h-44 w-auto object-contain drop-shadow-[0_20px_24px_rgba(2,34,38,0.4)]"
                     />
                     <p className="mt-6 font-display text-xl font-semibold">

@@ -50,13 +50,13 @@ export function BarfInicio({ productosBarf }: { productosBarf: ProductoBarf[] })
           {/* Dante junto a su ración servida: ocupa la segunda columna del
               grid, que hasta ahora quedaba vacía en pantallas anchas. */}
           <Image
-            src="/images/dante/plato_lleno.png"
-            alt="Dante sentado junto a un plato servido con alimentación BARF"
-            width={1261}
-            height={1101}
+            src="/images/dante/alimentacion_natural.png"
+            alt="Dante junto a su ración de alimentación BARF y los empaques de La Cocina Canina"
+            width={1300}
+            height={1001}
             loading="lazy"
-            sizes="(max-width: 767px) 70vw, 340px"
-            className="mx-auto mt-8 h-auto w-56 object-contain drop-shadow-[0_24px_28px_rgba(2,34,38,0.45)] md:mt-0 md:w-full md:max-w-[21rem]"
+            sizes="(max-width: 767px) 80vw, 420px"
+            className="mx-auto mt-8 h-auto w-72 object-contain drop-shadow-[0_24px_28px_rgba(2,34,38,0.45)] md:mt-0 md:w-full md:max-w-[26rem]"
           />
 
           <div className="mt-12 grid gap-5 md:grid-cols-3">

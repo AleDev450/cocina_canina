@@ -45,7 +45,7 @@ export default async function PaginaProductos({
             ? [{ nombre: "Productos", href: "/productos" }, { nombre: info.nombre }]
             : [{ nombre: "Productos" }]),
         ]}
-        pose="mirada"
+        imagen={{ src: "/images/dante/alimentamos_felicidad.png", ancho: 1085, alto: 1282 }}
       />
 
       <Catalogo
